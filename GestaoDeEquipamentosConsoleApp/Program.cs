@@ -54,20 +54,46 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.WriteLine();
             equipamento.id = equipamento.id++;
 
-            Console.Write("Nome: ");
-            equipamento.nome = Console.ReadLine()!;
-            Console.Write("Preço de Aquisicao: ");
-            equipamento.precoAquisicao = Convert.ToDecimal(Console.ReadLine());
-            Console.Write("Numero de Série: ");
-            equipamento.numeroSerie = Console.ReadLine()!;
-            Console.Write("Data de Fabricação ex:[05/08/2022]: ");
-            equipamento.dataFabricacao = DateTime.Parse(Console.ReadLine()!);
-            Console.Write("Fabricante: ");
-            equipamento.fabricante = Console.ReadLine()!;
+            while(true)
+            {
+                Console.Write("Nome: ");
+                equipamento.nome = Console.ReadLine()!;
 
-            Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}")
-            Console.ReadLine();
+                bool validarNome = Validar.ValidarQtdCaracteres(equipamento.nome);
 
+                if (validarNome == true) continue;
+                else break;
+            }
+                Console.Write("Preço de Aquisicao: ");
+                equipamento.precoAquisicao = Convert.ToDecimal(Console.ReadLine());
+                Console.Write("Numero de Série: ");
+                equipamento.numeroSerie = Console.ReadLine()!;
+                Console.Write("Data de Fabricação ex:[05/08/2022]: ");
+                equipamento.dataFabricacao = DateTime.Parse(Console.ReadLine()!);
+                Console.Write("Fabricante: ");
+                equipamento.fabricante = Console.ReadLine()!;
+
+                Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
+                Console.ReadLine();
+
+        }
+    }
+
+    public class Validar
+    {
+        public static bool ValidarQtdCaracteres(string valor)
+        {
+            int numeroMinimoCaracteres = 6;
+
+            if (valor.Length < numeroMinimoCaracteres)
+            {
+                Console.WriteLine($"Nome deve ter no mínimo {numeroMinimoCaracteres} caracteres!");
+                Console.Write("Digite [Enter] para continuar ");
+                Console.ReadLine();
+                return true;
+            }
+
+            return false;
         }
     }
 
