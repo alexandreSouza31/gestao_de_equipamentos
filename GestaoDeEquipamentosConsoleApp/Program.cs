@@ -30,8 +30,7 @@ namespace GestaoDeEquipamentosConsoleApp
     {
         public char ApresentarMenu()
         {
-            Console.Clear();
-            Console.WriteLine("----- Gestão de Equipamentos -----");
+            ExibirCabecalho();
             Console.WriteLine(); Console.WriteLine("1 - Cadastrar Equipamento");
             Console.WriteLine("S - Sair");
             Console.Write("\nDigite uma opçpão: ");
@@ -46,9 +45,7 @@ namespace GestaoDeEquipamentosConsoleApp
         {
             Equipamento equipamento = new Equipamento();
 
-            Console.Clear();
-            Console.WriteLine("----- Gestão de Equipamentos -----");
-            Console.WriteLine();
+            ExibirCabecalho();
             Console.WriteLine();
             Console.WriteLine("-- Cadastrar Equipamento --");
             Console.WriteLine();
@@ -76,6 +73,14 @@ namespace GestaoDeEquipamentosConsoleApp
                 Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
                 Console.ReadLine();
 
+        }
+
+        private void ExibirCabecalho()
+        {
+            string nomeSolucao = "Gestão de Equipamentos";
+            Console.Clear();
+            Console.WriteLine($"----- {nomeSolucao} -----");
+            Console.WriteLine();
         }
     }
 
