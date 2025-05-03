@@ -21,22 +21,28 @@ namespace GestaoDeEquipamentosConsoleApp
                     case '1':
                         telaEquipamento.Cadastrar();
                         break;
+                    case '2':
+                        telaEquipamento.Visualizar();
+                        break;
                 }
             }
         }
     }
 
+    #region apresentação
     public class TelaEquipamento
     {
+        public RepositorioEquipamento repositorioEquipamnto = new RepositorioEquipamento();
         public char ApresentarMenu()
         {
             ExibirCabecalho();
-            Console.WriteLine(); Console.WriteLine("1 - Cadastrar Equipamento");
+            Console.WriteLine(); 
+            Console.WriteLine("1 - Cadastrar Equipamento");
+            Console.WriteLine("2 - Visualizar Equipamento");
             Console.WriteLine("S - Sair");
-            Console.Write("\nDigite uma opçpão: ");
+            Console.Write("\nDigite uma opção: ");
             char opcaoEscolhida= Convert.ToChar(Console.ReadLine()!.ToUpper()[0]);
             Console.Write("Digite [Enter] para continuar ");
-            Console.ReadLine();
 
             return opcaoEscolhida;
         }
@@ -70,9 +76,46 @@ namespace GestaoDeEquipamentosConsoleApp
                 Console.Write("Fabricante: ");
                 equipamento.fabricante = Console.ReadLine()!;
 
+                repositorioEquipamnto.equipamentos[0]=equipamento;
                 Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
                 Console.ReadLine();
 
+        }
+
+        public void Visualizar()
+        {
+            ExibirCabecalho();
+            Console.WriteLine();
+            Console.WriteLine("-- Visualizar Equipamentos --");
+            Console.WriteLine();
+
+            Equipamento[] equipamentos=repositorioEquipamnto.equipamentos;
+            int encontrados = 0;
+            string tamanhoCabecalhoColunas = "{0, -5} | {1, -30} | {2, -15} | {3, -15} | {4, -15} | {5, -10}";
+
+                for (int i = 0; i < equipamentos.Length; i++)
+                {
+                    Equipamento e = equipamentos[i];
+
+                    if (e == null) continue;
+
+                if (encontrados == 0)
+                {
+                    Console.WriteLine(
+                        tamanhoCabecalhoColunas,
+                        "Id".ToUpper(), "Nome".ToUpper(), "Preço Aquisicao".ToUpper(), "Numero Série".ToUpper(), "Data Fabricação".ToUpper(), "Fabricante".ToUpper()
+                    );
+                }
+
+                Console.WriteLine(
+                        tamanhoCabecalhoColunas,
+                        e.id, e.nome, e.precoAquisicao.ToString("C2"), e.numeroSerie, e.dataFabricacao.ToShortDateString(), e.fabricante
+                    );
+                    encontrados++;
+                }
+            if (encontrados == 0) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
+            
+            Console.ReadLine();
         }
 
         private void ExibirCabecalho()
@@ -83,7 +126,7 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.WriteLine();
         }
     }
-
+    #endregion
     public class Validar
     {
         public static bool ValidarQtdCaracteres(string valor)
@@ -102,6 +145,14 @@ namespace GestaoDeEquipamentosConsoleApp
         }
     }
 
+    #region dados
+    public class RepositorioEquipamento
+    {
+        public Equipamento[] equipamentos=new Equipamento[100];
+    }
+    #endregion
+
+    #region regra de negócio
     public class Equipamento
     {
         static int numeroId = 1;
@@ -112,4 +163,5 @@ namespace GestaoDeEquipamentosConsoleApp
         public DateTime dataFabricacao;
         public string fabricante;
     }
+    #endregion
 }
