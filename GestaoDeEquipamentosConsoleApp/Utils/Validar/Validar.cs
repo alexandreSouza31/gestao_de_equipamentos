@@ -1,8 +1,8 @@
-namespace GestaoDeEquipamentosConsoleApp
+namespace GestaoDeEquipamentosConsoleApp.Utils
 {
     public class Validar
     {
-        public bool ValidarQtdCaracteres(string nome)
+        public static bool ValidarQtdCaracteres(string nome)
         {
             int numeroMinimoCaracteres = 6;
 

@@ -1,5 +1,5 @@
-﻿using System.Runtime.Intrinsics.X86;
-
+﻿//using System.Runtime.Intrinsics.X86;
+using GestaoDeEquipamentosConsoleApp.Utils;
 namespace GestaoDeEquipamentosConsoleApp
 {
     internal class Program
@@ -122,9 +122,7 @@ namespace GestaoDeEquipamentosConsoleApp
                         e.id, e.nome, e.precoAquisicao.ToString("C2"), e.numeroSerie, e.dataFabricacao.ToShortDateString(), e.fabricante
                     );
                 encontrados++;
-                Console.WriteLine();
-                Console.Write("Digite [Enter] para continuar ");
-                Console.ReadLine();
+                DigitarEnterEContinuar.Executar();
                 return true;
             }
             if (encontrados == 0) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
@@ -255,23 +253,7 @@ namespace GestaoDeEquipamentosConsoleApp
         }
     }
     #endregion
-    public class Validar
-    {
-        public static bool ValidarQtdCaracteres(string valor)
-        {
-            int numeroMinimoCaracteres = 6;
 
-            if (valor.Length < numeroMinimoCaracteres)
-            {
-                Console.WriteLine($"Nome deve ter no mínimo {numeroMinimoCaracteres} caracteres!");
-                Console.Write("Digite [Enter] para continuar ");
-                Console.ReadLine();
-                return true;
-            }
-
-            return false;
-        }
-    }
 
     #region dados
     public class RepositorioEquipamento
