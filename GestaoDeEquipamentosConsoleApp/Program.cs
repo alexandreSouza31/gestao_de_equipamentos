@@ -27,6 +27,12 @@ namespace GestaoDeEquipamentosConsoleApp
                     case '3':
                         telaEquipamento.Editar();
                         break;
+                    case '4':
+                        telaEquipamento.Excluir();
+                        break;
+                    default:
+                        Console.WriteLine("Digite uma opção válida!");
+                        break;
                 }
             }
         }
@@ -43,6 +49,7 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.WriteLine("1 - Cadastrar Equipamento");
             Console.WriteLine("2 - Visualizar Equipamentos");
             Console.WriteLine("3 - Editar Equipamento");
+            Console.WriteLine("4 - Excluir Equipamento");
             Console.WriteLine("S - Sair");
             Console.Write("\nDigite uma opção: ");
             char opcaoEscolhida = Convert.ToChar(Console.ReadLine()!.ToUpper()[0]);
@@ -56,7 +63,6 @@ namespace GestaoDeEquipamentosConsoleApp
             Equipamento equipamento = new Equipamento();
 
             ExibirCabecalho();
-            Console.WriteLine();
             Console.WriteLine("-- Cadastrar Equipamento --");
             Console.WriteLine();
             equipamento.id = equipamento.id++;
@@ -90,7 +96,6 @@ namespace GestaoDeEquipamentosConsoleApp
         {
             if (exibirCabecalho == true) ExibirCabecalho();
 
-            Console.WriteLine();
             Console.WriteLine("-- Visualizar Equipamentos --");
             Console.WriteLine();
 
@@ -123,6 +128,7 @@ namespace GestaoDeEquipamentosConsoleApp
                 return true;
             }
             if (encontrados == 0) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
+            Console.Write("Digite [Enter] para continuar ");
             Console.ReadLine();
             return false;
         }
@@ -130,7 +136,6 @@ namespace GestaoDeEquipamentosConsoleApp
         public void Editar()
         {
             ExibirCabecalho();
-            Console.WriteLine();
             Console.WriteLine("-- Editar Equipamento --");
             Console.WriteLine();
 
@@ -144,7 +149,7 @@ namespace GestaoDeEquipamentosConsoleApp
                 Console.WriteLine();
                 Console.Write("Digite o Id do equipamento para editar: ");
                 int idEscolhido = Convert.ToInt32(Console.ReadLine()!);
-
+                
                 Equipamento equipamentoSelecionado = null;
 
                 for (int i = 0; i < equipamentos.Length; i++)
@@ -206,6 +211,47 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.Clear();
             Console.WriteLine($"----- {nomeSolucao} -----");
             Console.WriteLine();
+        }
+
+        internal void Excluir()
+        {
+            ExibirCabecalho();
+            Console.WriteLine("-- Excluir Equipamento --");
+            Console.WriteLine();
+
+            bool visualizarCadastrados = Visualizar(false);
+            if (visualizarCadastrados == false) return;
+
+            Equipamento[] equipamentos = repositorioEquipamnto.equipamentos;
+
+            while (true)
+            {
+                Console.WriteLine();
+                Console.Write("Digite o Id do equipamento para excluir: ");
+                int idEscolhido = Convert.ToInt32(Console.ReadLine()!);
+
+                for (int i = 0; i < equipamentos.Length; i++)
+                {
+                    if (equipamentos[i] == null) continue;
+
+                    if (idEscolhido == equipamentos[i].id)
+                    {
+                        equipamentos[i] = null;
+                        Console.WriteLine();
+                        Console.WriteLine($"Equipamento excluído com sucesso! id: {idEscolhido}");
+                        Console.Write("Digite [Enter] para continuar ");
+                        Console.ReadLine();
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("ID inválido. Tente novamente.");
+                    }
+                    Console.Write("Digite [Enter] para continuar ");
+                    Console.ReadLine();
+                }
+            }
         }
     }
     #endregion
