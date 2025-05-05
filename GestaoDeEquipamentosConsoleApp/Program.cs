@@ -53,7 +53,7 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.WriteLine("S - Sair");
             Console.Write("\nDigite uma opção: ");
             char opcaoEscolhida = Convert.ToChar(Console.ReadLine()!.ToUpper()[0]);
-            Console.Write("Digite [Enter] para continuar ");
+            DigitarEnterEContinuar.Executar(false);
 
             return opcaoEscolhida;
         }
@@ -88,8 +88,7 @@ namespace GestaoDeEquipamentosConsoleApp
 
             repositorioEquipamnto.equipamentos[0] = equipamento;
             Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
-            Console.ReadLine();
-
+            DigitarEnterEContinuar.Executar();
         }
 
         public bool Visualizar(bool exibirCabecalho)
@@ -126,8 +125,7 @@ namespace GestaoDeEquipamentosConsoleApp
                 return true;
             }
             if (encontrados == 0) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
-            Console.Write("Digite [Enter] para continuar ");
-            Console.ReadLine();
+            DigitarEnterEContinuar.Executar();
             return false;
         }
 
@@ -167,16 +165,13 @@ namespace GestaoDeEquipamentosConsoleApp
                     ObterDados(equipamentoSelecionado);
                     Console.WriteLine();
                     Console.WriteLine($"nome: {equipamentoSelecionado.nome} editado com sucesso! id: {equipamentoSelecionado.id}");
-                    Console.Write("Digite [Enter] para continuar ");
-                    Console.ReadLine();
+                    DigitarEnterEContinuar.Executar();
                     return;
                 }
                 else
                 {
                     Console.WriteLine();
                     Console.WriteLine("ID inválido. Tente novamente.");
-                    Console.Write("Digite [Enter] para continuar ");
-                    Console.ReadLine();
                 }
             }
         }
@@ -237,8 +232,7 @@ namespace GestaoDeEquipamentosConsoleApp
                         equipamentos[i] = null;
                         Console.WriteLine();
                         Console.WriteLine($"Equipamento excluído com sucesso! id: {idEscolhido}");
-                        Console.Write("Digite [Enter] para continuar ");
-                        Console.ReadLine();
+                        DigitarEnterEContinuar.Executar();
                         return;
                     }
                     else
@@ -246,8 +240,6 @@ namespace GestaoDeEquipamentosConsoleApp
                         Console.WriteLine();
                         Console.WriteLine("ID inválido. Tente novamente.");
                     }
-                    Console.Write("Digite [Enter] para continuar ");
-                    Console.ReadLine();
                 }
             }
         }
