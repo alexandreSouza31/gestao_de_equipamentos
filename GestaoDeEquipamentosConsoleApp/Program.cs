@@ -180,7 +180,7 @@ namespace GestaoDeEquipamentosConsoleApp
         {
             while (true)
             {
-                Console.Write("Nome: ");
+                Console.Write($"Nome ({e.nome}):");
                 e.nome = Console.ReadLine()!;
 
                 bool validarNome = Validar.ValidarQtdCaracteres(e.nome);
@@ -188,13 +188,13 @@ namespace GestaoDeEquipamentosConsoleApp
                 if (validarNome == true) continue;
                 else break;
             }
-            Console.Write("Preço de Aquisicao: ");
+            Console.Write($"Preço de Aquisicao ({e.precoAquisicao}):");
             e.precoAquisicao = Convert.ToDecimal(Console.ReadLine());
-            Console.Write("Numero de Série: ");
+            Console.Write($"Numero de Série ({e.numeroSerie}):");
             e.numeroSerie = Console.ReadLine()!;
-            Console.Write("Data de Fabricação ex:[05/08/2022]: ");
+            Console.Write($"Data de Fabricação ex:05/08/2022 ({e.dataFabricacao}):");
             e.dataFabricacao = DateTime.Parse(Console.ReadLine()!);
-            Console.Write("Fabricante: ");
+            Console.Write($"Fabricante ({e.fabricante}):");
             e.fabricante = Console.ReadLine()!;
         }
 
