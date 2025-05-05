@@ -11,7 +11,7 @@ namespace GestaoDeEquipamentosConsoleApp
             {
                 char opcaoEscolhida = telaEquipamento.ApresentarMenu();
 
-                if (opcaoEscolhida == 's')
+                if (opcaoEscolhida == 'S')
                 {
                     break;
                 }
