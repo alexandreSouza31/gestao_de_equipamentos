@@ -86,26 +86,27 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.Write("Fabricante: ");
             equipamento.fabricante = Console.ReadLine()!;
 
-            repositorioEquipamnto.equipamentos[0] = equipamento;
+            repositorioEquipamnto.CadastrarEquipamento(equipamento);
             Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
             DigitarEnterEContinuar.Executar();
         }
 
         public bool Visualizar(bool exibirCabecalho)
         {
-            if (exibirCabecalho == true) ExibirCabecalho();
+            if (exibirCabecalho)
+                ExibirCabecalho();
 
             Console.WriteLine("-- Visualizar Equipamentos --");
             Console.WriteLine();
 
-            Equipamento[] equipamentos = repositorioEquipamnto.equipamentos;
+            Equipamento[] equipamentos = repositorioEquipamnto.SelecionarEquipamentos();
             int encontrados = 0;
+
             string tamanhoCabecalhoColunas = "{0, -5} | {1, -30} | {2, -15} | {3, -15} | {4, -15} | {5, -10}";
 
             for (int i = 0; i < equipamentos.Length; i++)
             {
                 Equipamento e = equipamentos[i];
-
                 if (e == null) continue;
 
                 if (encontrados == 0)
@@ -117,17 +118,19 @@ namespace GestaoDeEquipamentosConsoleApp
                 }
 
                 Console.WriteLine(
-                        tamanhoCabecalhoColunas,
-                        e.id, e.nome, e.precoAquisicao.ToString("C2"), e.numeroSerie, e.dataFabricacao.ToShortDateString(), e.fabricante
-                    );
+                    tamanhoCabecalhoColunas,
+                    e.id, e.nome, e.precoAquisicao.ToString("C2"), e.numeroSerie, e.dataFabricacao.ToShortDateString(), e.fabricante
+                );
+
                 encontrados++;
-                DigitarEnterEContinuar.Executar();
-                return true;
             }
+
             if (encontrados == 0) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
+
             DigitarEnterEContinuar.Executar();
-            return false;
+            return encontrados > 0;
         }
+
 
         public void Editar()
         {
@@ -251,6 +254,18 @@ namespace GestaoDeEquipamentosConsoleApp
     public class RepositorioEquipamento
     {
         public Equipamento[] equipamentos = new Equipamento[100];
+
+        public int contadorEquipamentos = 0;
+        public void CadastrarEquipamento(Equipamento equipamento)
+        {
+            equipamentos[contadorEquipamentos] = equipamento;
+            contadorEquipamentos++;
+        }
+
+        public Equipamento[] SelecionarEquipamentos()
+        {
+            return equipamentos;
+        }
     }
     #endregion
 
