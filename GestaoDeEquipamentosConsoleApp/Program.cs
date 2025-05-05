@@ -22,7 +22,7 @@ namespace GestaoDeEquipamentosConsoleApp
                         telaEquipamento.Cadastrar();
                         break;
                     case '2':
-                        telaEquipamento.Visualizar(true);
+                        telaEquipamento.Visualizar(true,true);
                         break;
                     case '3':
                         telaEquipamento.Editar();
@@ -91,7 +91,7 @@ namespace GestaoDeEquipamentosConsoleApp
             DigitarEnterEContinuar.Executar();
         }
 
-        public bool Visualizar(bool exibirCabecalho)
+        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar)
         {
             if (exibirCabecalho)
                 ExibirCabecalho();
@@ -127,7 +127,7 @@ namespace GestaoDeEquipamentosConsoleApp
 
             if (encontrados == 0) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
 
-            DigitarEnterEContinuar.Executar();
+            if(digitarEnterEContinuar) DigitarEnterEContinuar.Executar();
             return encontrados > 0;
         }
 
@@ -138,7 +138,7 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.WriteLine("-- Editar Equipamento --");
             Console.WriteLine();
 
-            bool visualizarCadastrados = Visualizar(false);
+            bool visualizarCadastrados = Visualizar(false,true);
             if (visualizarCadastrados == false) return;
 
             Equipamento[] equipamentos = repositorioEquipamnto.equipamentos;
@@ -162,12 +162,15 @@ namespace GestaoDeEquipamentosConsoleApp
                         break;
                     }
                 }
+                Console.WriteLine();
+                Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
 
                 if (equipamentoSelecionado != null)
                 {
                     ObterDados(equipamentoSelecionado);
+                    Visualizar(true,false);
                     Console.WriteLine();
-                    Console.WriteLine($"nome: {equipamentoSelecionado.nome} editado com sucesso! id: {equipamentoSelecionado.id}");
+                    Console.WriteLine($"{equipamentoSelecionado.nome} editado com sucesso! id: {equipamentoSelecionado.id}");
                     DigitarEnterEContinuar.Executar();
                     return;
                 }
@@ -183,22 +186,35 @@ namespace GestaoDeEquipamentosConsoleApp
         {
             while (true)
             {
-                Console.Write($"Nome ({e.nome}):");
-                e.nome = Console.ReadLine()!;
-
-                bool validarNome = Validar.ValidarQtdCaracteres(e.nome);
-
-                if (validarNome == true) continue;
-                else break;
+                Console.Write($"Nome ({e.nome}): ");
+                string inputNome = Console.ReadLine()!;
+                if (!string.IsNullOrWhiteSpace(inputNome))
+                {
+                    if (Validar.ValidarQtdCaracteres(inputNome)) continue;
+                    e.nome = inputNome;
+                }
+                break;
             }
-            Console.Write($"Preço de Aquisicao ({e.precoAquisicao}):");
-            e.precoAquisicao = Convert.ToDecimal(Console.ReadLine());
-            Console.Write($"Numero de Série ({e.numeroSerie}):");
-            e.numeroSerie = Console.ReadLine()!;
-            Console.Write($"Data de Fabricação ex:05/08/2022 ({e.dataFabricacao}):");
-            e.dataFabricacao = DateTime.Parse(Console.ReadLine()!);
-            Console.Write($"Fabricante ({e.fabricante}):");
-            e.fabricante = Console.ReadLine()!;
+
+            Console.Write($"Preço de Aquisicao ({e.precoAquisicao}): ");
+            string inputPreco = Console.ReadLine()!;
+            if (!string.IsNullOrWhiteSpace(inputPreco))
+                e.precoAquisicao = Convert.ToDecimal(inputPreco);
+
+            Console.Write($"Numero de Série ({e.numeroSerie}): ");
+            string inputNumeroSerie = Console.ReadLine()!;
+            if (!string.IsNullOrWhiteSpace(inputNumeroSerie))
+                e.numeroSerie = inputNumeroSerie;
+
+            Console.Write($"Data de Fabricação ex:05/08/2022 ({e.dataFabricacao.ToShortDateString()}): ");
+            string inputData = Console.ReadLine()!;
+            if (!string.IsNullOrWhiteSpace(inputData))
+                e.dataFabricacao = DateTime.Parse(inputData);
+
+            Console.Write($"Fabricante ({e.fabricante}): ");
+            string inputFabricante = Console.ReadLine()!;
+            if (!string.IsNullOrWhiteSpace(inputFabricante))
+                e.fabricante = inputFabricante;
         }
 
         private void ExibirCabecalho()
@@ -215,7 +231,7 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.WriteLine("-- Excluir Equipamento --");
             Console.WriteLine();
 
-            bool visualizarCadastrados = Visualizar(false);
+            bool visualizarCadastrados = Visualizar(false, true);
             if (visualizarCadastrados == false) return;
 
             Equipamento[] equipamentos = repositorioEquipamnto.equipamentos;
