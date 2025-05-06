@@ -31,6 +31,7 @@ namespace GestaoDeEquipamentosConsoleApp
                         break;
                     default:
                         Console.WriteLine("Digite uma opção válida!");
+                        DigitarEnterEContinuar.Executar(true);
                         break;
                 }
             }
@@ -52,7 +53,6 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.WriteLine("S - Sair");
             Console.Write("\nDigite uma opção: ");
             char opcaoEscolhida = Convert.ToChar(Console.ReadLine()!.ToUpper()[0]);
-            DigitarEnterEContinuar.Executar(false);
 
             return opcaoEscolhida;
         }
