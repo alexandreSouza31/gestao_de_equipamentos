@@ -64,28 +64,9 @@ namespace GestaoDeEquipamentosConsoleApp
             ExibirCabecalho();
             Console.WriteLine("-- Cadastrar Equipamento --");
             Console.WriteLine();
-
-            //while (true)
-            //{
-            //    Console.Write("Nome: ");
-            //    equipamento.nome = Console.ReadLine()!;
-
-            //    bool validarNome = Validar.ValidarQtdCaracteres(equipamento.nome);
-
-            //    if (validarNome == true) continue;
-            //    else break;
-            //}
             equipamento.id = Equipamento.numeroId++;
 
-            //Console.Write("Preço de Aquisicao: ");
-            //equipamento.precoAquisicao = Convert.ToDecimal(Console.ReadLine());
-            //Console.Write("Numero de Série: ");
-            //equipamento.numeroSerie = Console.ReadLine()!;
-            //Console.Write("Data de Fabricação ex:[05/08/2022]: ");
-            //equipamento.dataFabricacao = DateTime.Parse(Console.ReadLine()!);
-            //Console.Write("Fabricante: ");
-            //equipamento.fabricante = Console.ReadLine()!;
-            var novosDados = ObterNovosDados(equipamento);
+            var novosDados = ObterNovosDados(equipamento,false);
             AtualizarEquipamento(equipamento, novosDados);
 
             repositorioEquipamnto.CadastrarEquipamento(equipamento);
@@ -167,7 +148,7 @@ namespace GestaoDeEquipamentosConsoleApp
 
                 if (equipamentoSelecionado != null)
                 {
-                    var novosDados = ObterNovosDados(equipamentoSelecionado);
+                    var novosDados = ObterNovosDados(equipamentoSelecionado,true);
                     AtualizarEquipamento(equipamentoSelecionado, novosDados);
 
                     Visualizar(true, false);
@@ -185,35 +166,48 @@ namespace GestaoDeEquipamentosConsoleApp
         }
 
 
-        public static Equipamento ObterNovosDados(Equipamento dadosOriginais)
+        public static Equipamento ObterNovosDados(Equipamento dadosOriginais,bool editar)
         {
             Equipamento novosDados=new Equipamento();
 
-            Console.WriteLine();
-            Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
+            if (editar == true)
+            {
+                Console.WriteLine();
+                Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
+            }
 
             while (true)
             {
-                Console.Write($"Nome ({dadosOriginais.nome}): ");
+                string etiquetaNome = editar ? $"Nome ({dadosOriginais.nome}): " : "Nome: ";
+                Console.Write(etiquetaNome);
+
                 string inputNome = Console.ReadLine()!;
                 novosDados.nome = string.IsNullOrWhiteSpace(inputNome) ? dadosOriginais.nome : inputNome;
                 break;
             }
 
-            Console.Write($"Preço de Aquisição ({dadosOriginais.precoAquisicao}): ");
-            string inputPreco = Console.ReadLine();
-            novosDados.precoAquisicao = string.IsNullOrWhiteSpace(inputPreco) ? dadosOriginais.precoAquisicao : Convert.ToDecimal(inputPreco);
+            string etiquetaPrecoAquisicao = editar ? $"Preço de Aquisição ({dadosOriginais.precoAquisicao}): " : "Preço de Aquisição: ";
+            Console.Write(etiquetaPrecoAquisicao);
 
-            Console.Write($"Número de Série ({dadosOriginais.numeroSerie}): ");
-            string inputNumeroSerie = Console.ReadLine();
+            string inputPrecoAquisicao = Console.ReadLine()!;
+            novosDados.precoAquisicao = string.IsNullOrWhiteSpace(inputPrecoAquisicao) ? dadosOriginais.precoAquisicao : Convert.ToDecimal(inputPrecoAquisicao);
+
+            string etiquetaNumeroSerie = editar ? $"Número de Série ({dadosOriginais.numeroSerie}): " : "Número de Série: ";
+            Console.Write(etiquetaNumeroSerie);
+
+            string inputNumeroSerie = Console.ReadLine()!;
             novosDados.numeroSerie = string.IsNullOrWhiteSpace(inputNumeroSerie) ? dadosOriginais.numeroSerie : inputNumeroSerie;
 
-            Console.Write($"Data de Fabricação ({dadosOriginais.dataFabricacao.ToShortDateString()}): ");
-            string inputData = Console.ReadLine();
+            string etiquetaDataFabricacao = editar ? $"Data de Fabricação ({dadosOriginais.dataFabricacao.ToShortDateString()}): " : "Data de Fabricação: ";
+            Console.Write(etiquetaDataFabricacao);
+
+            string inputData = Console.ReadLine()!;
             novosDados.dataFabricacao = string.IsNullOrWhiteSpace(inputData) ? dadosOriginais.dataFabricacao : DateTime.Parse(inputData);
 
-            Console.Write($"Fabricante ({dadosOriginais.fabricante}): ");
-            string inputFabricante = Console.ReadLine();
+            string etiquetaFabricante = editar ? $"Fabricante ({dadosOriginais.fabricante}): " : "Fabricante: ";
+            Console.Write(etiquetaFabricante);
+
+            string inputFabricante = Console.ReadLine()!;
             novosDados.fabricante = string.IsNullOrWhiteSpace(inputFabricante) ? dadosOriginais.fabricante : inputFabricante;
 
             return novosDados;
