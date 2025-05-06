@@ -41,10 +41,11 @@ namespace GestaoDeEquipamentosConsoleApp
     #region apresentação
     public class TelaEquipamento
     {
+        public string pagina;
         public RepositorioEquipamento repositorioEquipamnto = new RepositorioEquipamento();
         public char ApresentarMenu()
         {
-            ExibirCabecalho();
+            ExibirCabecalho("");
             Console.WriteLine();
             Console.WriteLine("1 - Cadastrar Equipamento");
             Console.WriteLine("2 - Visualizar Equipamentos");
@@ -59,11 +60,10 @@ namespace GestaoDeEquipamentosConsoleApp
 
         public void Cadastrar()
         {
+            pagina = "Cadastrar";
             Equipamento equipamento = new Equipamento();
 
-            ExibirCabecalho();
-            Console.WriteLine("-- Cadastrar Equipamento --");
-            Console.WriteLine();
+            ExibirCabecalho(pagina);
             equipamento.id = Equipamento.numeroId++;
 
             var novosDados = ObterNovosDados(equipamento,false);
@@ -76,11 +76,8 @@ namespace GestaoDeEquipamentosConsoleApp
 
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar)
         {
-            if (exibirCabecalho)
-                ExibirCabecalho();
-
-            Console.WriteLine("-- Visualizar Equipamentos --");
-            Console.WriteLine();
+            pagina = "Visualizar";
+            if (exibirCabecalho) ExibirCabecalho(pagina);
 
             Equipamento[] equipamentos = repositorioEquipamnto.SelecionarEquipamentos();
             int encontrados = 0;
@@ -117,9 +114,8 @@ namespace GestaoDeEquipamentosConsoleApp
 
         public void Editar()
         {
-            ExibirCabecalho();
-            Console.WriteLine("-- Editar Equipamento --");
-            Console.WriteLine();
+            pagina = "Editar";
+            ExibirCabecalho(pagina);
 
             bool visualizarCadastrados = Visualizar(false, true);
             if (!visualizarCadastrados) return;
@@ -222,19 +218,18 @@ namespace GestaoDeEquipamentosConsoleApp
             dadosOriginais.fabricante = novosDados.fabricante;
         }
 
-        private void ExibirCabecalho()
+        private void ExibirCabecalho(string pagina)
         {
             string nomeSolucao = "Gestão de Equipamentos";
             Console.Clear();
-            Console.WriteLine($"----- {nomeSolucao} -----");
+            Console.WriteLine($"----- {nomeSolucao}/{pagina} -----");
             Console.WriteLine();
         }
 
         internal void Excluir()
         {
-            ExibirCabecalho();
-            Console.WriteLine("-- Excluir Equipamento --");
-            Console.WriteLine();
+            pagina = "Excluir";
+            ExibirCabecalho(pagina);
 
             bool visualizarCadastrados = Visualizar(false, true);
             if (visualizarCadastrados == false) return;
