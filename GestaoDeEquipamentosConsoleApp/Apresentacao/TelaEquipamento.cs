@@ -142,6 +142,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             if (visualizarCadastrados == false) return;
 
             Equipamento[] equipamentos = repositorioEquipamnto.equipamentos;
+            bool equipamentoExcluido = false;
 
             while (true)
             {
@@ -159,13 +160,14 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                         Console.WriteLine();
                         Console.WriteLine($"Equipamento excluído com sucesso! id: {idEscolhido}");
                         DigitarEnterEContinuar.Executar();
+                        equipamentoExcluido |= true;
                         return;
                     }
-                    else
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine("ID inválido. Tente novamente.");
-                    }
+                }
+                if (equipamentoExcluido == false)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ID inválido. Tente novamente.");
                 }
             }
         }
