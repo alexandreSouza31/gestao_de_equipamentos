@@ -1,5 +1,4 @@
-﻿//using System.Runtime.Intrinsics.X86;
-using GestaoDeEquipamentosConsoleApp.Utils;
+﻿using GestaoDeEquipamentosConsoleApp.Utils;
 namespace GestaoDeEquipamentosConsoleApp
 {
     internal class Program
@@ -66,34 +65,33 @@ namespace GestaoDeEquipamentosConsoleApp
             Console.WriteLine("-- Cadastrar Equipamento --");
             Console.WriteLine();
 
-            while (true)
-            {
-                Console.Write("Nome: ");
-                equipamento.nome = Console.ReadLine()!;
+            //while (true)
+            //{
+            //    Console.Write("Nome: ");
+            //    equipamento.nome = Console.ReadLine()!;
 
-                bool validarNome = Validar.ValidarQtdCaracteres(equipamento.nome);
+            //    bool validarNome = Validar.ValidarQtdCaracteres(equipamento.nome);
 
-                if (validarNome == true) continue;
-                else break;
-            }
-
-            // ID só é gerado aqui!
+            //    if (validarNome == true) continue;
+            //    else break;
+            //}
             equipamento.id = Equipamento.numeroId++;
 
-            Console.Write("Preço de Aquisicao: ");
-            equipamento.precoAquisicao = Convert.ToDecimal(Console.ReadLine());
-            Console.Write("Numero de Série: ");
-            equipamento.numeroSerie = Console.ReadLine()!;
-            Console.Write("Data de Fabricação ex:[05/08/2022]: ");
-            equipamento.dataFabricacao = DateTime.Parse(Console.ReadLine()!);
-            Console.Write("Fabricante: ");
-            equipamento.fabricante = Console.ReadLine()!;
+            //Console.Write("Preço de Aquisicao: ");
+            //equipamento.precoAquisicao = Convert.ToDecimal(Console.ReadLine());
+            //Console.Write("Numero de Série: ");
+            //equipamento.numeroSerie = Console.ReadLine()!;
+            //Console.Write("Data de Fabricação ex:[05/08/2022]: ");
+            //equipamento.dataFabricacao = DateTime.Parse(Console.ReadLine()!);
+            //Console.Write("Fabricante: ");
+            //equipamento.fabricante = Console.ReadLine()!;
+            var novosDados = ObterNovosDados(equipamento);
+            AtualizarEquipamento(equipamento, novosDados);
 
             repositorioEquipamnto.CadastrarEquipamento(equipamento);
             Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
             DigitarEnterEContinuar.Executar();
         }
-
 
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar)
         {
@@ -169,9 +167,6 @@ namespace GestaoDeEquipamentosConsoleApp
 
                 if (equipamentoSelecionado != null)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
-
                     var novosDados = ObterNovosDados(equipamentoSelecionado);
                     AtualizarEquipamento(equipamentoSelecionado, novosDados);
 
@@ -201,12 +196,6 @@ namespace GestaoDeEquipamentosConsoleApp
             {
                 Console.Write($"Nome ({dadosOriginais.nome}): ");
                 string inputNome = Console.ReadLine()!;
-                //if (!string.IsNullOrWhiteSpace(inputNome))
-                //{
-                //    if (Validar.ValidarQtdCaracteres(inputNome)) continue;
-                //    dadosOriginais.nome = inputNome;
-                //}
-                //break;
                 novosDados.nome = string.IsNullOrWhiteSpace(inputNome) ? dadosOriginais.nome : inputNome;
                 break;
             }
