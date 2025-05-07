@@ -23,6 +23,35 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             return opcaoEscolhida;
         }
+
+        public bool ExibirMenuEquipamento(TelaEquipamento telaEquipamento)
+        {
+            char opcaoEscolhida = telaEquipamento.ApresentarMenu();
+
+            if (opcaoEscolhida == 'S') return false;
+
+            switch (opcaoEscolhida)
+            {
+                case '1':
+                    telaEquipamento.Cadastrar();
+                    break;
+                case '2':
+                    telaEquipamento.Visualizar(true, true);
+                    break;
+                case '3':
+                    telaEquipamento.Editar();
+                    break;
+                case '4':
+                    telaEquipamento.Excluir();
+                    break;
+                default:
+                    Console.WriteLine("Digite uma opção válida!");
+                    DigitarEnterEContinuar.Executar(true);
+                    break;
+            }
+            return true;
+        }
+
         private void ExibirCabecalho(string pagina)
         {
             string nomeSolucao = "Gestão de Equipamentos";

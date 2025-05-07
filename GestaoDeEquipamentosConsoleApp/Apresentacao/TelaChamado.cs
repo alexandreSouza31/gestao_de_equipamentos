@@ -23,6 +23,29 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             return opcaoEscolhida;
         }
+
+        public bool ExibirMenuChamado(TelaChamado telaChamado)
+        {
+            char opcaoEscolhida = telaChamado.ApresentarMenu();
+
+            if (opcaoEscolhida == 'S') return false;
+
+            switch (opcaoEscolhida)
+            {
+                case '1':
+                    telaChamado.Cadastrar();
+                    break;
+                case '2':
+                    telaChamado.Visualizar(true, true);
+                    break;
+                default:
+                    Console.WriteLine("Digite uma opção válida!");
+                    DigitarEnterEContinuar.Executar(true);
+                    break;
+            }
+            return true;
+        }
+
         private void ExibirCabecalho(string pagina)
         {
             string nomeSolucao = "Gestão de Chamados";
