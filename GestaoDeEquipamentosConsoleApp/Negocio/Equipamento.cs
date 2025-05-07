@@ -9,5 +9,10 @@
         public string numeroSerie;
         public DateTime dataFabricacao;
         public string fabricante;
+
+        public override string ToString()
+        {
+            return $"Id: {id} - Nome: {nome}";
+        }
     }
 }

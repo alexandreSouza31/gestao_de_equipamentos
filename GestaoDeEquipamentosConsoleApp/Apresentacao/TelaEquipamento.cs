@@ -7,7 +7,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
     public class TelaEquipamento
     {
         public string pagina;
-        public RepositorioEquipamento repositorioEquipamnto = new RepositorioEquipamento();
+        public RepositorioEquipamento repositorioEquipamento = new RepositorioEquipamento();
+
         public char ApresentarMenu()
         {
             ExibirCabecalho("");
@@ -41,7 +42,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             var novosDados = ObterNovosDados(equipamento, false);
             AtualizarEquipamento(equipamento, novosDados);
 
-            repositorioEquipamnto.CadastrarEquipamento(equipamento);
+            repositorioEquipamento.CadastrarEquipamento(equipamento);
             Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
             DigitarEnterEContinuar.Executar();
         }
@@ -51,7 +52,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Visualizar";
             if (exibirCabecalho) ExibirCabecalho(pagina);
 
-            Equipamento[] equipamentos = repositorioEquipamnto.SelecionarEquipamentos();
+            Equipamento[] equipamentos = repositorioEquipamento.SelecionarEquipamentos();
             int encontrados = 0;
 
             string tamanhoCabecalhoColunas = "{0, -5} | {1, -30} | {2, -15} | {3, -15} | {4, -15} | {5, -10}";
@@ -92,7 +93,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             bool visualizarCadastrados = Visualizar(false, true);
             if (!visualizarCadastrados) return;
 
-            Equipamento[] equipamentos = repositorioEquipamnto.equipamentos;
+            Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
 
             while (true)
             {
@@ -141,7 +142,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             bool visualizarCadastrados = Visualizar(false, true);
             if (visualizarCadastrados == false) return;
 
-            Equipamento[] equipamentos = repositorioEquipamnto.equipamentos;
+            Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
             bool equipamentoExcluido = false;
 
             while (true)

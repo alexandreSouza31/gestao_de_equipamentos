@@ -7,7 +7,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
     public class TelaChamado
     {
         public string pagina;
-        public RepositorioEquipamento repositorioEquipamnto = new RepositorioEquipamento();
+        public RepositorioChamado repositorioChamado = new RepositorioChamado();
+        public static RepositorioEquipamento repositorioEquipamento;
         public char ApresentarMenu()
         {
             ExibirCabecalho("");
@@ -44,58 +45,76 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return telaEscolhida;
         }
 
-        //public void Cadastrar()
-        //{
-        //    pagina = "Cadastrar chamado";
-        //    Equipamento equipamento = new Equipamento();
+        public bool Cadastrar()
+        {
+            pagina = "Cadastrar chamado";
+            Chamado chamado = new Chamado();
+            Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
 
-        //    ExibirCabecalho(pagina);
-        //    equipamento.id = Equipamento.numeroId++;
+            ExibirCabecalho(pagina);
+            chamado.id = Equipamento.numeroId++;
 
-        //    var novosDados = ObterNovosDados(equipamento, false);
-        //    AtualizarEquipamento(equipamento, novosDados);
+            bool haEquipamentos = VerificarExistenciaEquipamentos();
 
-        //    repositorioEquipamnto.CadastrarEquipamento(equipamento);
-        //    Console.WriteLine($"Chamado {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
-        //    DigitarEnterEContinuar.Executar();
-        //}
+            if (!haEquipamentos)
+            {
+                Console.WriteLine("\nNenhum equipamento cadastrado. Cadastre um equipamento antes de abrir um chamado.");
+                Console.WriteLine("Voltando ao menu principal...");
+                Thread.Sleep(7000);
+                ExibirMenuPrincipal();
+                return false;
+            }
 
-        //public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar)
-        //{
-        //    pagina = "Visualizar chamado";
-        //    if (exibirCabecalho) ExibirCabecalho(pagina);
+            var novosdados = ObterNovosDados(chamado, false);
+            AtualizarChamado(chamado, novosdados);
 
-        //    Equipamento[] equipamentos = repositorioEquipamnto.SelecionarEquipamentos();
-        //    int encontrados = 0;
+            repositorioChamado.CadastrarEquipamento(chamado);
+            Console.WriteLine($"chamado {chamado.titulo} cadastrado com sucesso! id: {chamado.id}");
+            DigitarEnterEContinuar.Executar();
+            return true;
+        }
 
-        //    string tamanhoCabecalhoColunas = "{0, -5} | {1, -30} | {2, -15} | {3, -15} | {4, -15} | {5, -10}";
+        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar =true)
+        {
+            pagina = "Visualizar chamado";
+            if (exibirCabecalho) ExibirCabecalho(pagina);
 
-        //    for (int i = 0; i < equipamentos.Length; i++)
-        //    {
-        //        Equipamento e = equipamentos[i];
-        //        if (e == null) continue;
+            Chamado[] chamados = repositorioChamado.SelecionarChamados();
+            int encontrados = 0;
 
-        //        if (encontrados == 0)
-        //        {
-        //            Console.WriteLine(
-        //                tamanhoCabecalhoColunas,
-        //                "Id".ToUpper(), "Nome".ToUpper(), "Preço Aquisicao".ToUpper(), "Numero Série".ToUpper(), "Data Fabricação".ToUpper(), "Fabricante".ToUpper()
-        //            );
-        //        }
+            string tamanhoCabecalhoColunas = "{0, -5} | {1, -20} | {2, -40} | {3, -15} | {4, -15}";
 
-        //        Console.WriteLine(
-        //            tamanhoCabecalhoColunas,
-        //            e.id, e.nome, e.precoAquisicao.ToString("C2"), e.numeroSerie, e.dataFabricacao.ToShortDateString(), e.fabricante
-        //        );
+            for (int i = 0; i < chamados.Length; i++)
+            {
+                Chamado e = chamados[i];
+                if (e == null) continue;
 
-        //        encontrados++;
-        //    }
+                if (encontrados == 0)
+                {
+                    Console.WriteLine(
+                        tamanhoCabecalhoColunas,
+                        "Id".ToUpper(), "Título".ToUpper(), "Descrição".ToUpper(), "Data Abertura".ToUpper(), "Equipamento".ToUpper()
+                    );
+                }
 
-        //    if (encontrados == 0) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
+                Console.WriteLine(
+                    tamanhoCabecalhoColunas,
+                    e.id, e.titulo, e.descricao, e.dataAbertura.ToShortDateString(), e.equipamento
+                );
 
-        //    if (digitarEnterEContinuar) DigitarEnterEContinuar.Executar();
-        //    return encontrados > 0;
-        //}
+                encontrados++;
+            }
+
+            if (encontrados == 0)
+            {
+                if(msgAoCadastrar)
+                Console.WriteLine("Ainda não há chamados! Faça um cadastro!");
+                //msgAoCadastrar = false;
+            }
+
+            if (digitarEnterEContinuar) DigitarEnterEContinuar.Executar();
+            return encontrados > 0;
+        }
 
 
         //public void Editar()
@@ -106,7 +125,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         //    bool visualizarCadastrados = Visualizar(false, true);
         //    if (!visualizarCadastrados) return;
 
-        //    Equipamento[] equipamentos = repositorioEquipamnto.equipamentos;
+        //    Equipamento[] equipamentos = repositorioChamado.equipamentos;
 
         //    while (true)
         //    {
@@ -155,7 +174,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         //    bool visualizarCadastrados = Visualizar(false, true);
         //    if (visualizarCadastrados == false) return;
 
-        //    Equipamento[] equipamentos = repositorioEquipamnto.equipamentos;
+        //    Equipamento[] equipamentos = repositorioChamado.equipamentos;
         //    bool equipamentoExcluido = false;
 
         //    while (true)
@@ -186,60 +205,144 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         //    }
         //}
 
-        //public static Equipamento ObterNovosDados(Equipamento dadosOriginais, bool editar)
-        //{
-        //    Equipamento novosDados = new Equipamento();
+        public static Chamado ObterNovosDados(Chamado dadosOriginais, bool editar)
+        {
+            Chamado novosDados = new Chamado();
+            var tela = new TelaChamado();
 
-        //    if (editar == true)
-        //    {
-        //        Console.WriteLine();
-        //        Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
-        //    }
+            tela.Visualizar(true, false, false);
 
-        //    while (true)
-        //    {
-        //        string etiquetaNome = editar ? $"Nome ({dadosOriginais.nome}): " : "Nome: ";
-        //        Console.Write(etiquetaNome);
+            if (editar == true)
+            {
+                Console.WriteLine();
+                Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
+            }
 
-        //        string inputNome = Console.ReadLine()!;
-        //        novosDados.nome = string.IsNullOrWhiteSpace(inputNome) ? dadosOriginais.nome : inputNome;
-        //        break;
-        //    }
+            while (true)
+            {
+                string etiquetaTitulo = editar ? $"Título ({dadosOriginais.titulo}): " : "Título: ";
+                Console.Write(etiquetaTitulo);
 
-        //    string etiquetaPrecoAquisicao = editar ? $"Preço de Aquisição ({dadosOriginais.precoAquisicao}): " : "Preço de Aquisição: ";
-        //    Console.Write(etiquetaPrecoAquisicao);
+                string inputTitulo = Console.ReadLine()!;
+                novosDados.titulo = string.IsNullOrWhiteSpace(inputTitulo) ? dadosOriginais.titulo : inputTitulo;
+                break;
+            }
 
-        //    string inputPrecoAquisicao = Console.ReadLine()!;
-        //    novosDados.precoAquisicao = string.IsNullOrWhiteSpace(inputPrecoAquisicao) ? dadosOriginais.precoAquisicao : Convert.ToDecimal(inputPrecoAquisicao);
+            string etiquetaDescricao = editar ? $"Descricao ({dadosOriginais.descricao}): " : "Descricao: ";
+            Console.Write(etiquetaDescricao);
 
-        //    string etiquetaNumeroSerie = editar ? $"Número de Série ({dadosOriginais.numeroSerie}): " : "Número de Série: ";
-        //    Console.Write(etiquetaNumeroSerie);
+            string inputDescricao = Console.ReadLine()!;
+            novosDados.descricao = string.IsNullOrWhiteSpace(inputDescricao) ? dadosOriginais.descricao : inputDescricao;
 
-        //    string inputNumeroSerie = Console.ReadLine()!;
-        //    novosDados.numeroSerie = string.IsNullOrWhiteSpace(inputNumeroSerie) ? dadosOriginais.numeroSerie : inputNumeroSerie;
+            DateTime inputData = DateTime.Now;
+            string etiquetaDataAbertura = editar ? $"Data de Abertura ({dadosOriginais.dataAbertura.ToShortDateString()}): " : $"Data de Abertura: {inputData}";
+            Console.Write(etiquetaDataAbertura);
 
-        //    string etiquetaDataFabricacao = editar ? $"Data de Fabricação ({dadosOriginais.dataFabricacao.ToShortDateString()}): " : "Data de Fabricação: ";
-        //    Console.Write(etiquetaDataFabricacao);
+            novosDados.dataAbertura = inputData;
+            Console.WriteLine();
+            //
+            //Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
+            Equipamento equipamentoSelecionado = null;
 
-        //    string inputData = Console.ReadLine()!;
-        //    novosDados.dataFabricacao = string.IsNullOrWhiteSpace(inputData) ? dadosOriginais.dataFabricacao : DateTime.Parse(inputData);
+            //bool haEquipamentos = VerificarExistenciaEquipamentos();
 
-        //    string etiquetaFabricante = editar ? $"Fabricante ({dadosOriginais.fabricante}): " : "Fabricante: ";
-        //    Console.Write(etiquetaFabricante);
+            //if (!haEquipamentos)
+            //{
+            //    Console.WriteLine("\nNenhum equipamento cadastrado. Cadastre um equipamento antes de abrir um chamado.");
+            //    Console.WriteLine("Voltando ao menu principal...");
+            //    Thread.Sleep(2000); // pausa de 2 segundos para leitura da mensagem
+            //    return null!;
+            //}
 
-        //    string inputFabricante = Console.ReadLine()!;
-        //    novosDados.fabricante = string.IsNullOrWhiteSpace(inputFabricante) ? dadosOriginais.fabricante : inputFabricante;
 
-        //    return novosDados;
-        //}
+            while (equipamentoSelecionado == null)
+            {
+                Console.Write("Digite o ID do equipamento que deseja associar: ");
+                string etiquetaEquipamento = editar ? $"Equipamento ({dadosOriginais.equipamento.nome}): " : "";
+                Console.Write(etiquetaEquipamento);
 
-        //public static void AtualizarEquipamento(Equipamento dadosOriginais, Equipamento novosDados)
-        //{
-        //    dadosOriginais.nome = novosDados.nome;
-        //    dadosOriginais.precoAquisicao = novosDados.precoAquisicao;
-        //    dadosOriginais.numeroSerie = novosDados.numeroSerie;
-        //    dadosOriginais.dataFabricacao = novosDados.dataFabricacao;
-        //    dadosOriginais.fabricante = novosDados.fabricante;
-        //}
+                int inputId = Convert.ToInt32(Console.ReadLine()!);
+                //Equipamento equipamentoSelecionado = repositorioEquipamento.SelecionarEquipamentoPorId(inputEquipamentoId);
+
+                //Equipamento equipamentoSelecionado = null;
+                if (string.IsNullOrWhiteSpace(Convert.ToString(inputId)) && editar)
+                {
+                    equipamentoSelecionado = dadosOriginais.equipamento;
+                    break;
+                }
+
+                if (int.TryParse(Convert.ToString(inputId), out int inputEquipamentoId))
+                {
+                    equipamentoSelecionado = repositorioEquipamento.SelecionarEquipamentoPorId(inputEquipamentoId);
+                    if (equipamentoSelecionado == null)
+                    {
+                        Console.WriteLine("\nEquipamento não encontrado. Tente novamente.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Entrada inválida. Digite um número de ID ou pressione Enter para manter o atual.");
+                }
+            }
+
+            novosDados.equipamento = equipamentoSelecionado;
+
+            return novosDados;
+
+            //    for (int i = 0; i < equipamentos.Length; i++)
+            //    {
+            //        Equipamento e = equipamentos[i];
+            //        if (e == null) continue;
+
+            //        if (inputEquipamentoId == e.id)
+            //        {
+            //            equipamentoSelecionado = e;
+            //            break;
+            //        }
+            //    }
+
+            //    if (equipamentoSelecionado != null)
+            //    {
+            //        if (equipamentoSelecionado) novosDados.equipamento = dadosOriginais.equipamento;
+            //        else equipamentoSelecionado = novosDados.equipamento=equipamentoSelecionado;
+            //         //novosDados.equipamento = equipamentoSelecionado ? dadosOriginais.equipamento : equipamentoSelecionado;
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine();
+            //        Console.WriteLine("ID inválido. Tente novamente.");
+            //    }
+            //}
+            //return novosDados;
+
+            //    int inputEquipamentoId = Convert.ToInt32(Console.ReadLine()!);
+            //Equipamento equipamentoSelecionado = repositorioEquipamento.SelecionarEquipamentoPorId(inputEquipamentoId);
+            //novosDados.equipamento = equipamentoSelecionado;
+        }
+
+        private static bool VerificarExistenciaEquipamentos()
+        {
+            Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
+
+            bool haEquipamentos = false;
+            for (int i = 0; i < equipamentos.Length; i++)
+            {
+                if (equipamentos[i] != null)
+                {
+                    haEquipamentos = true;
+                    break;
+                }
+            }
+
+            return haEquipamentos;
+        }
+
+        public static void AtualizarChamado(Chamado dadosOriginais, Chamado novosDados)
+        {
+            dadosOriginais.titulo = novosDados.titulo;
+            dadosOriginais.descricao = novosDados.descricao;
+            dadosOriginais.dataAbertura = novosDados.dataAbertura;
+            dadosOriginais.equipamento = novosDados.equipamento;
+        }
     }
 }

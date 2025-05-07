@@ -17,5 +17,21 @@ namespace GestaoDeEquipamentosConsoleApp.Dados
         {
             return equipamentos;
         }
+
+        public Equipamento SelecionarEquipamentoPorId(int idSelecionado)
+        {
+            for (int i = 0; i < equipamentos.Length; i++)
+            {
+                Equipamento e = equipamentos[i];
+
+                if (e == null)
+                    continue;
+
+                if (e.id == idSelecionado)
+                    return e;
+            }
+
+            return null;
+        }
     }
 }
