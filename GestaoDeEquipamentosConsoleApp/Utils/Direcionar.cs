@@ -20,12 +20,9 @@ namespace GestaoDeEquipamentosConsoleApp.Utils
                 }
                 else
                 {
-                    Console.WriteLine("\nNenhum chamado cadastrado!");
+                    Console.WriteLine("\nNenhum chamado cadastrado ainda.");
                     Console.WriteLine("Voltando ao menu de chamados...");
                     Thread.Sleep(4000);
-
-                    TelaChamado tela = new TelaChamado();
-                    tela.ExibirMenuPrincipal();
                     return false;
                 }
             }

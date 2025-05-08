@@ -6,8 +6,17 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
     public class TelaChamado
     {
+        public TelaChamado()
+        {
+            if (repositorioChamado == null)
+                repositorioChamado = new RepositorioChamado();
+
+            if (repositorioEquipamento == null)
+                repositorioEquipamento = new RepositorioEquipamento();
+        }
+
         public string pagina;
-        public RepositorioChamado repositorioChamado = new RepositorioChamado();
+        public static RepositorioChamado repositorioChamado;
         public static RepositorioEquipamento repositorioEquipamento;
         Direcionar direcionar=new Direcionar();
         public char ApresentarMenu()
@@ -84,7 +93,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool haEquipamentos = VerificarExistenciaEquipamentos();
-            direcionar.DirecionarParaMenu(!haEquipamentos,true);
+            bool continuar = direcionar.DirecionarParaMenu(haEquipamentos, true);
+            if (!continuar) return false;
 
             var novosdados = ObterNovosDados(chamado, false);
             AtualizarChamado(chamado, novosdados);
@@ -96,10 +106,21 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return true;
         }
 
-        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar =true)
+        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
             pagina = "Visualizar chamado";
             if (exibirCabecalho) ExibirCabecalho(pagina);
+
+            if (repositorioChamado == null || repositorioChamado.SelecionarChamados() == null)
+            {
+                if (msgAoCadastrar)
+                    Console.WriteLine("Ainda não há chamados! Faça um cadastro!");
+
+                if (digitarEnterEContinuar)
+                    DigitarEnterEContinuar.Executar();
+
+                return false;
+            }
 
             Chamado[] chamados = repositorioChamado.SelecionarChamados();
             int encontrados = 0;
@@ -127,13 +148,12 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 encontrados++;
             }
 
-            if (encontrados == 0)
-            {
-                if(msgAoCadastrar)
+            if (encontrados == 0 && msgAoCadastrar)
                 Console.WriteLine("Ainda não há chamados! Faça um cadastro!");
-            }
 
-            if (digitarEnterEContinuar) DigitarEnterEContinuar.Executar();
+            if (digitarEnterEContinuar)
+                DigitarEnterEContinuar.Executar();
+
             return encontrados > 0;
         }
 
@@ -143,18 +163,21 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Editar chamado";
             ExibirCabecalho(pagina);
 
-            bool haChamados = Visualizar(false, false, false);
-            if (!haChamados)
+            bool visualizarCadastrados = Visualizar(false, false, false);
+            if (!visualizarCadastrados)
             {
-                Console.WriteLine("\nNenhum chamado cadastrado ainda.");
-                Console.WriteLine("Voltando ao menu de chamados...");
-                Thread.Sleep(4000);
-
+                Console.WriteLine("Nenhum chamado disponível para edição.");
+                DigitarEnterEContinuar.Executar();
                 return false;
             }
 
             bool haEquipamentos = VerificarExistenciaEquipamentos();
-            direcionar.DirecionarParaMenu(!haEquipamentos,true);
+            if (!haEquipamentos)
+            {
+                Console.WriteLine("Nenhum equipamento encontrado. Não é possível editar chamados.");
+                DigitarEnterEContinuar.Executar();
+                return false;
+            }
 
             while (true)
             {
@@ -173,7 +196,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     Console.WriteLine("Chamado não encontrado. Tente novamente.");
                     continue;
                 }
-                
+
                 Chamado novosDados = ObterNovosDados(chamadoExistente, true);
                 novosDados.id = chamadoExistente.id;
                 AtualizarChamado(chamadoExistente, novosDados);
@@ -182,7 +205,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 Console.WriteLine();
                 Console.WriteLine($"{chamadoExistente.titulo} editado com sucesso! id: {chamadoExistente.id}");
                 DigitarEnterEContinuar.Executar();
-                return true;     
+                return true;
             }
         }
 
@@ -191,24 +214,25 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Excluir chamado";
             ExibirCabecalho(pagina);
 
+            bool haChamados = VerificarExistenciaChamados();
+            bool continuar = direcionar.DirecionarParaMenu(haChamados, false);
+            if (!continuar) return false;
+
             bool visualizarCadastrados = Visualizar(false, false);
-            if (visualizarCadastrados == false)
-            {
-                direcionar.DirecionarParaMenu(visualizarCadastrados, false);
-                return false;
-            }
+            if (!visualizarCadastrados) return false;
 
             Chamado[] chamados = repositorioChamado.chamados;
-            bool equipamentoExcluido = false;
+            bool chamadoExcluido = false;
 
             while (true)
             {
                 Console.WriteLine();
-                Console.Write("Digite o Id do equipamento para excluir: ");
-                int idEscolhido = Convert.ToInt32(Console.ReadLine()!);
-
-                bool haEquipamentos = VerificarExistenciaEquipamentos();
-                direcionar.DirecionarParaMenu(!haEquipamentos,true);
+                Console.Write("Digite o Id do chamado para excluir: ");
+                if (!int.TryParse(Console.ReadLine(), out int idEscolhido))
+                {
+                    Console.WriteLine("ID inválido. Tente novamente.");
+                    continue;
+                }
 
                 for (int i = 0; i < chamados.Length; i++)
                 {
@@ -220,11 +244,12 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                         Console.WriteLine();
                         Console.WriteLine($"Chamado excluído com sucesso! id: {idEscolhido}");
                         DigitarEnterEContinuar.Executar();
-                        equipamentoExcluido |= true;
+                        chamadoExcluido = true;
                         return true;
                     }
                 }
-                if (equipamentoExcluido == false)
+
+                if (!chamadoExcluido)
                 {
                     Console.WriteLine();
                     Console.WriteLine("ID inválido. Tente novamente.");
@@ -320,12 +345,35 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return haEquipamentos;
         }
 
+        private static bool VerificarExistenciaChamados()
+        {
+            if (repositorioChamado == null || repositorioChamado.chamados == null)
+                return false;
+
+            Chamado[] chamados = repositorioChamado.chamados;
+
+            for (int i = 0; i < chamados.Length; i++)
+            {
+                if (chamados[i] != null) return true;
+            }
+            return false;
+        }
+
         public static void AtualizarChamado(Chamado dadosOriginais, Chamado novosDados)
         {
             dadosOriginais.titulo = novosDados.titulo;
             dadosOriginais.descricao = novosDados.descricao;
             dadosOriginais.dataAbertura = novosDados.dataAbertura;
             dadosOriginais.equipamento = novosDados.equipamento;
+
+            for (int i = 0; i < repositorioChamado.chamados.Length; i++)
+            {
+                if (repositorioChamado.chamados[i]?.id == dadosOriginais.id)
+                {
+                    repositorioChamado.chamados[i] = dadosOriginais;
+                    break;
+                }
+            }
         }
     }
 }
