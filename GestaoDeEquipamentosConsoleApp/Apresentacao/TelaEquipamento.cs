@@ -66,11 +66,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             Equipamento equipamento = new Equipamento();
 
             ExibirCabecalho(pagina);
-            equipamento.id = Equipamento.numeroId++;
 
             var novosDados = ObterNovosDados(equipamento, false);
             AtualizarEquipamento(equipamento, novosDados);
 
+            equipamento.id = Equipamento.numeroId++;
             repositorioEquipamento.CadastrarEquipamento(equipamento);
             Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
             DigitarEnterEContinuar.Executar();

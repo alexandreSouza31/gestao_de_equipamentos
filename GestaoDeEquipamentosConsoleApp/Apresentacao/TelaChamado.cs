@@ -9,6 +9,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public string pagina;
         public RepositorioChamado repositorioChamado = new RepositorioChamado();
         public static RepositorioEquipamento repositorioEquipamento;
+        Direcionar direcionar=new Direcionar();
         public char ApresentarMenu()
         {
             ExibirCabecalho("");
@@ -40,6 +41,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     break;
                 case '3':
                     telaChamado.Editar();
+                    break;
+                case '4':
+                    telaChamado.Excluir();
                     break;
                 default:
                     Console.WriteLine("Digite uma opção válida!");
@@ -78,22 +82,14 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
 
             ExibirCabecalho(pagina);
-            chamado.id = Equipamento.numeroId++;
 
             bool haEquipamentos = VerificarExistenciaEquipamentos();
-
-            if (!haEquipamentos)
-            {
-                Console.WriteLine("\nNenhum equipamento cadastrado. Cadastre um equipamento antes de abrir um chamado.");
-                Console.WriteLine("Voltando ao menu principal...");
-                Thread.Sleep(7000);
-                ExibirMenuPrincipal();
-                return false;
-            }
+            direcionar.DirecionarParaMenu(!haEquipamentos,true);
 
             var novosdados = ObterNovosDados(chamado, false);
             AtualizarChamado(chamado, novosdados);
 
+            chamado.id = Chamado.numeroId++;
             repositorioChamado.CadastrarEquipamento(chamado);
             Console.WriteLine($"chamado {chamado.titulo} cadastrado com sucesso! id: {chamado.id}");
             DigitarEnterEContinuar.Executar();
@@ -158,16 +154,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
 
             bool haEquipamentos = VerificarExistenciaEquipamentos();
-
-            if (!haEquipamentos)
-            {
-                Console.WriteLine("\nNenhum equipamento cadastrado. Cadastre um equipamento antes de abrir um chamado.");
-                Console.WriteLine("Voltando ao menu principal...");
-                Thread.Sleep(7000);
-                
-                ExibirMenuPrincipal();
-                return false;
-            }
+            direcionar.DirecionarParaMenu(!haEquipamentos,true);
 
             while (true)
             {
@@ -199,44 +186,51 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        //internal void Excluir()
-        //{
-        //    pagina = "Excluir chamado";
-        //    ExibirCabecalho(pagina);
+        public bool Excluir()
+        {
+            pagina = "Excluir chamado";
+            ExibirCabecalho(pagina);
 
-        //    bool visualizarCadastrados = Visualizar(false, true);
-        //    if (visualizarCadastrados == false) return;
+            bool visualizarCadastrados = Visualizar(false, false);
+            if (visualizarCadastrados == false)
+            {
+                direcionar.DirecionarParaMenu(visualizarCadastrados, false);
+                return false;
+            }
 
-        //    Equipamento[] equipamentos = repositorioChamado.equipamentos;
-        //    bool equipamentoExcluido = false;
+            Chamado[] chamados = repositorioChamado.chamados;
+            bool equipamentoExcluido = false;
 
-        //    while (true)
-        //    {
-        //        Console.WriteLine();
-        //        Console.Write("Digite o Id do equipamento para excluir: ");
-        //        int idEscolhido = Convert.ToInt32(Console.ReadLine()!);
+            while (true)
+            {
+                Console.WriteLine();
+                Console.Write("Digite o Id do equipamento para excluir: ");
+                int idEscolhido = Convert.ToInt32(Console.ReadLine()!);
 
-        //        for (int i = 0; i < equipamentos.Length; i++)
-        //        {
-        //            if (equipamentos[i] == null) continue;
+                bool haEquipamentos = VerificarExistenciaEquipamentos();
+                direcionar.DirecionarParaMenu(!haEquipamentos,true);
 
-        //            if (idEscolhido == equipamentos[i].id)
-        //            {
-        //                equipamentos[i] = null;
-        //                Console.WriteLine();
-        //                Console.WriteLine($"Equipamento excluído com sucesso! id: {idEscolhido}");
-        //                DigitarEnterEContinuar.Executar();
-        //                equipamentoExcluido |= true;
-        //                return;
-        //            }
-        //        }
-        //        if (equipamentoExcluido == false)
-        //        {
-        //            Console.WriteLine();
-        //            Console.WriteLine("ID inválido. Tente novamente.");
-        //        }
-        //    }
-        //}
+                for (int i = 0; i < chamados.Length; i++)
+                {
+                    if (chamados[i] == null) continue;
+
+                    if (idEscolhido == chamados[i].id)
+                    {
+                        chamados[i] = null;
+                        Console.WriteLine();
+                        Console.WriteLine($"Chamado excluído com sucesso! id: {idEscolhido}");
+                        DigitarEnterEContinuar.Executar();
+                        equipamentoExcluido |= true;
+                        return true;
+                    }
+                }
+                if (equipamentoExcluido == false)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ID inválido. Tente novamente.");
+                }
+            }
+        }
 
         public static Chamado ObterNovosDados(Chamado dadosOriginais, bool editar)
         {
