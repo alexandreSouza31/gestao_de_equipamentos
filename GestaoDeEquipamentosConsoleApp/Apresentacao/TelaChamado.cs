@@ -38,6 +38,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 case '2':
                     telaChamado.Visualizar(true, true);
                     break;
+                case '3':
+                    telaChamado.Editar();
+                    break;
                 default:
                     Console.WriteLine("Digite uma opção válida!");
                     DigitarEnterEContinuar.Executar(true);
@@ -132,7 +135,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             {
                 if(msgAoCadastrar)
                 Console.WriteLine("Ainda não há chamados! Faça um cadastro!");
-                //msgAoCadastrar = false;
             }
 
             if (digitarEnterEContinuar) DigitarEnterEContinuar.Executar();
@@ -140,54 +142,62 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         }
 
 
-        //public void Editar()
-        //{
-        //    pagina = "Editar chamado";
-        //    ExibirCabecalho(pagina);
+        public bool Editar()
+        {
+            pagina = "Editar chamado";
+            ExibirCabecalho(pagina);
 
-        //    bool visualizarCadastrados = Visualizar(false, true);
-        //    if (!visualizarCadastrados) return;
+            bool haChamados = Visualizar(false, false, false);
+            if (!haChamados)
+            {
+                Console.WriteLine("\nNenhum chamado cadastrado ainda.");
+                Console.WriteLine("Voltando ao menu de chamados...");
+                Thread.Sleep(4000);
 
-        //    Equipamento[] equipamentos = repositorioChamado.equipamentos;
+                return false;
+            }
 
-        //    while (true)
-        //    {
-        //        Console.WriteLine();
-        //        Console.Write("Digite o Id do equipamento para editar: ");
-        //        int idEscolhido = Convert.ToInt32(Console.ReadLine()!);
+            bool haEquipamentos = VerificarExistenciaEquipamentos();
 
-        //        Equipamento equipamentoSelecionado = null;
+            if (!haEquipamentos)
+            {
+                Console.WriteLine("\nNenhum equipamento cadastrado. Cadastre um equipamento antes de abrir um chamado.");
+                Console.WriteLine("Voltando ao menu principal...");
+                Thread.Sleep(7000);
+                
+                ExibirMenuPrincipal();
+                return false;
+            }
 
-        //        for (int i = 0; i < equipamentos.Length; i++)
-        //        {
-        //            Equipamento e = equipamentos[i];
-        //            if (e == null) continue;
+            while (true)
+            {
+                Console.WriteLine();
+                Console.Write("Digite o Id do chamado para editar: ");
+                if (!int.TryParse(Console.ReadLine(), out int idChamado))
+                {
+                    Console.WriteLine("ID inválido. Tente novamente.");
+                    continue;
+                }
 
-        //            if (idEscolhido == e.id)
-        //            {
-        //                equipamentoSelecionado = e;
-        //                break;
-        //            }
-        //        }
+                Chamado chamadoExistente = repositorioChamado.SelecionarChamadoPorId(idChamado);
 
-        //        if (equipamentoSelecionado != null)
-        //        {
-        //            var novosDados = ObterNovosDados(equipamentoSelecionado, true);
-        //            AtualizarEquipamento(equipamentoSelecionado, novosDados);
+                if (chamadoExistente == null)
+                {
+                    Console.WriteLine("Chamado não encontrado. Tente novamente.");
+                    continue;
+                }
+                
+                Chamado novosDados = ObterNovosDados(chamadoExistente, true);
+                novosDados.id = chamadoExistente.id;
+                AtualizarChamado(chamadoExistente, novosDados);
 
-        //            Visualizar(true, false);
-        //            Console.WriteLine();
-        //            Console.WriteLine($"{equipamentoSelecionado.nome} editado com sucesso! id: {equipamentoSelecionado.id}");
-        //            DigitarEnterEContinuar.Executar();
-        //            return;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine();
-        //            Console.WriteLine("ID inválido. Tente novamente.");
-        //        }
-        //    }
-        //}
+                Visualizar(true, false);
+                Console.WriteLine();
+                Console.WriteLine($"{chamadoExistente.titulo} editado com sucesso! id: {chamadoExistente.id}");
+                DigitarEnterEContinuar.Executar();
+                return true;     
+            }
+        }
 
         //internal void Excluir()
         //{
@@ -263,20 +273,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             novosDados.dataAbertura = inputData;
             Console.WriteLine();
-            //
-            //Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
+
             Equipamento equipamentoSelecionado = null;
-
-            //bool haEquipamentos = VerificarExistenciaEquipamentos();
-
-            //if (!haEquipamentos)
-            //{
-            //    Console.WriteLine("\nNenhum equipamento cadastrado. Cadastre um equipamento antes de abrir um chamado.");
-            //    Console.WriteLine("Voltando ao menu principal...");
-            //    Thread.Sleep(2000); // pausa de 2 segundos para leitura da mensagem
-            //    return null!;
-            //}
-
 
             while (equipamentoSelecionado == null)
             {
@@ -284,17 +282,15 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 string etiquetaEquipamento = editar ? $"Equipamento ({dadosOriginais.equipamento.nome}): " : "";
                 Console.Write(etiquetaEquipamento);
 
-                int inputId = Convert.ToInt32(Console.ReadLine()!);
-                //Equipamento equipamentoSelecionado = repositorioEquipamento.SelecionarEquipamentoPorId(inputEquipamentoId);
+                string inputId = Console.ReadLine()!;
 
-                //Equipamento equipamentoSelecionado = null;
-                if (string.IsNullOrWhiteSpace(Convert.ToString(inputId)) && editar)
+                if (string.IsNullOrWhiteSpace(inputId) && editar)
                 {
                     equipamentoSelecionado = dadosOriginais.equipamento;
                     break;
                 }
 
-                if (int.TryParse(Convert.ToString(inputId), out int inputEquipamentoId))
+                if (int.TryParse(inputId, out int inputEquipamentoId))
                 {
                     equipamentoSelecionado = repositorioEquipamento.SelecionarEquipamentoPorId(inputEquipamentoId);
                     if (equipamentoSelecionado == null)
@@ -311,37 +307,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             novosDados.equipamento = equipamentoSelecionado;
 
             return novosDados;
-
-            //    for (int i = 0; i < equipamentos.Length; i++)
-            //    {
-            //        Equipamento e = equipamentos[i];
-            //        if (e == null) continue;
-
-            //        if (inputEquipamentoId == e.id)
-            //        {
-            //            equipamentoSelecionado = e;
-            //            break;
-            //        }
-            //    }
-
-            //    if (equipamentoSelecionado != null)
-            //    {
-            //        if (equipamentoSelecionado) novosDados.equipamento = dadosOriginais.equipamento;
-            //        else equipamentoSelecionado = novosDados.equipamento=equipamentoSelecionado;
-            //         //novosDados.equipamento = equipamentoSelecionado ? dadosOriginais.equipamento : equipamentoSelecionado;
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine();
-            //        Console.WriteLine("ID inválido. Tente novamente.");
-            //    }
-            //}
-            //return novosDados;
-
-            //    int inputEquipamentoId = Convert.ToInt32(Console.ReadLine()!);
-            //Equipamento equipamentoSelecionado = repositorioEquipamento.SelecionarEquipamentoPorId(inputEquipamentoId);
-            //novosDados.equipamento = equipamentoSelecionado;
-        }
+       }
 
         private static bool VerificarExistenciaEquipamentos()
         {
