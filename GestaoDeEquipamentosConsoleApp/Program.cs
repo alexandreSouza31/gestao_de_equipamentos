@@ -1,4 +1,5 @@
 ﻿using GestaoDeEquipamentosConsoleApp.Apresentacao;
+using GestaoDeEquipamentosConsoleApp.Dados;
 using GestaoDeEquipamentosConsoleApp.Utils;
 
 namespace GestaoDeEquipamentosConsoleApp
@@ -9,6 +10,8 @@ namespace GestaoDeEquipamentosConsoleApp
         {
             TelaEquipamento telaEquipamento = new TelaEquipamento();
             TelaChamado telaChamado = new TelaChamado();
+            RepositorioFabricante repositorioFabricante = new RepositorioFabricante();
+            TelaFabricante telaFabricante = new TelaFabricante(telaEquipamento.repositorioFabricante);
 
             TelaChamado.repositorioEquipamento = telaEquipamento.repositorioEquipamento;
 
@@ -32,6 +35,13 @@ namespace GestaoDeEquipamentosConsoleApp
                     while (true)
                     {
                         bool menuChamado = telaChamado.ExibirMenuChamado(telaChamado);
+                        if (menuChamado == false) break;
+                    }
+                }else if (telaEscolhida == '3')
+                {
+                    while (true)
+                    {
+                        bool menuChamado = telaFabricante.Visualizar();
                         if (menuChamado == false) break;
                     }
                 }

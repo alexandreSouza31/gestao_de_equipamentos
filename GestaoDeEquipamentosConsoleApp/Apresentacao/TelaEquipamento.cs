@@ -8,6 +8,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
     {
         public string pagina;
         public RepositorioEquipamento repositorioEquipamento = new RepositorioEquipamento();
+        public RepositorioFabricante repositorioFabricante = new RepositorioFabricante();
 
         public char ApresentarMenu()
         {
@@ -72,6 +73,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             equipamento.id = Equipamento.numeroId++;
             repositorioEquipamento.CadastrarEquipamento(equipamento);
+            repositorioFabricante.RegistrarFabricante(equipamento.fabricante);
+
             Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
             DigitarEnterEContinuar.Executar();
         }

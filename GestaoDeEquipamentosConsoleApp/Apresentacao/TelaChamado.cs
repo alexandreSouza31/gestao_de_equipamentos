@@ -79,6 +79,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             char telaEscolhida;
             Console.WriteLine("1 - Equipamentos");
             Console.WriteLine("2 - Chamados");
+            Console.WriteLine("3 - Fabricantes");
             Console.WriteLine("S - Sair");
             telaEscolhida = Convert.ToChar(Console.ReadLine()!.ToUpper());
             return telaEscolhida;
