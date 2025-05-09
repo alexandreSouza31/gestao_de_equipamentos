@@ -94,7 +94,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool haEquipamentos = VerificarExistenciaEquipamentos();
-            bool continuar = direcionar.DirecionarParaMenu(haEquipamentos, true);
+
+            bool haChamados = repositorioChamado.contadorChamados > 0;
+            bool continuar = direcionar.DirecionarParaMenu(haChamados, true, "Chamado");
             if (!continuar) return false;
 
             var novosdados = ObterNovosDados(chamado, false);
@@ -112,16 +114,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Visualizar chamado";
             if (exibirCabecalho) ExibirCabecalho(pagina);
 
-            if (repositorioChamado == null || repositorioChamado.SelecionarChamados() == null)
-            {
-                if (msgAoCadastrar)
-                    Console.WriteLine("Ainda não há chamados! Faça um cadastro!");
+            bool haEquipamentos = VerificarExistenciaEquipamentos();
 
-                if (digitarEnterEContinuar)
-                    DigitarEnterEContinuar.Executar();
-
-                return false;
-            }
+            bool haChamados = repositorioChamado.contadorChamados > 0;
+            bool continuar = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
+            if (!continuar) return false;
 
             Chamado[] chamados = repositorioChamado.SelecionarChamados();
             int encontrados = 0;
@@ -165,20 +162,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool visualizarCadastrados = Visualizar(false, false, false);
-            if (!visualizarCadastrados)
-            {
-                Console.WriteLine("Nenhum chamado disponível para edição.");
-                DigitarEnterEContinuar.Executar();
-                return false;
-            }
 
             bool haEquipamentos = VerificarExistenciaEquipamentos();
-            if (!haEquipamentos)
-            {
-                Console.WriteLine("Nenhum equipamento encontrado. Não é possível editar chamados.");
-                DigitarEnterEContinuar.Executar();
-                return false;
-            }
+            bool haChamados = repositorioChamado.contadorChamados > 0;
+            bool continuar = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
+            if (!continuar) return false;
 
             while (true)
             {
@@ -216,7 +204,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool haChamados = VerificarExistenciaChamados();
-            bool continuar = direcionar.DirecionarParaMenu(haChamados, false);
+            bool continuar = direcionar.DirecionarParaMenu(haChamados, false,"Chamado");
             if (!continuar) return false;
 
             bool visualizarCadastrados = Visualizar(false, false);
