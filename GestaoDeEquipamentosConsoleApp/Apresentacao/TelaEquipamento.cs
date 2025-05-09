@@ -7,8 +7,16 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
     public class TelaEquipamento
     {
         public string pagina;
-        public RepositorioEquipamento repositorioEquipamento = new RepositorioEquipamento();
-        public RepositorioFabricante repositorioFabricante = new RepositorioFabricante();
+        private RepositorioEquipamento repositorioEquipamento = new RepositorioEquipamento();
+        private RepositorioFabricante repositorioFabricante;
+        public TelaFabricante telaFabricante;
+        Direcionar direcionar = new Direcionar();
+
+        public TelaEquipamento(RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante)
+        {
+            this.repositorioFabricante = repositorioFabricante;
+            this.telaFabricante = telaFabricante;
+        }
 
         public char ApresentarMenu()
         {
@@ -61,7 +69,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             Console.WriteLine();
         }
 
-        public void Cadastrar()
+        public bool Cadastrar()
         {
             pagina = "Cadastrar";
             Equipamento equipamento = new Equipamento();
@@ -69,14 +77,16 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             var novosDados = ObterNovosDados(equipamento, false);
+            if (novosDados == null) return false;
+
             AtualizarEquipamento(equipamento, novosDados);
 
             equipamento.id = Equipamento.numeroId++;
             repositorioEquipamento.CadastrarEquipamento(equipamento);
-            repositorioFabricante.RegistrarFabricante(equipamento.fabricante);
 
             Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
             DigitarEnterEContinuar.Executar();
+            return true;
         }
 
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar)
@@ -104,7 +114,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                 Console.WriteLine(
                     tamanhoCabecalhoColunas,
-                    e.id, e.nome, e.precoAquisicao.ToString("C2"), e.numeroSerie, e.dataFabricacao.ToShortDateString(), e.fabricante
+                    e.id, e.nome, e.precoAquisicao.ToString("C2"), e.numeroSerie, e.dataFabricacao.ToShortDateString(), e.fabricante.nome
                 );
 
                 encontrados++;
@@ -205,7 +215,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        public static Equipamento ObterNovosDados(Equipamento dadosOriginais, bool editar)
+        public Equipamento ObterNovosDados(Equipamento dadosOriginais, bool editar)
         {
             Equipamento novosDados = new Equipamento();
 
@@ -243,16 +253,40 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             string inputData = Console.ReadLine()!;
             novosDados.dataFabricacao = string.IsNullOrWhiteSpace(inputData) ? dadosOriginais.dataFabricacao : DateTime.Parse(inputData);
 
-            string etiquetaFabricante = editar ? $"Fabricante ({dadosOriginais.fabricante}): " : "Fabricante: ";
+            bool haFabricantes = telaFabricante.Visualizar();
+
+            bool continuar = direcionar.DirecionarParaMenu(haFabricantes, true, "Fabricante");
+            if (!continuar) return null;
+
+            string etiquetaFabricante = editar ? $"ID do Fabricante ({dadosOriginais.fabricante?.id}): " : "ID do Fabricante: ";
             Console.Write(etiquetaFabricante);
 
-            string inputFabricante = Console.ReadLine()!;
-            novosDados.fabricante = string.IsNullOrWhiteSpace(inputFabricante) ? dadosOriginais.fabricante : inputFabricante;
+            string inputIdFabricante = Console.ReadLine()!;
+
+            if (string.IsNullOrWhiteSpace(inputIdFabricante))
+            {
+                novosDados.fabricante = dadosOriginais.fabricante;
+            }
+            else
+            {
+                int idFabricante = int.Parse(inputIdFabricante);
+
+                Fabricante fabricanteEncontrado = repositorioFabricante.BuscarPorId(idFabricante);
+
+                if (fabricanteEncontrado == null)
+                {
+                    Console.WriteLine("Fabricante não encontrado! Pressione Enter para continuar...");
+                    Console.ReadLine();
+                    return null;
+                }
+
+                novosDados.fabricante = fabricanteEncontrado;
+            }
 
             return novosDados;
         }
 
-        public static void AtualizarEquipamento(Equipamento dadosOriginais, Equipamento novosDados)
+        public  void AtualizarEquipamento(Equipamento dadosOriginais, Equipamento novosDados)
         {
             dadosOriginais.nome = novosDados.nome;
             dadosOriginais.precoAquisicao = novosDados.precoAquisicao;

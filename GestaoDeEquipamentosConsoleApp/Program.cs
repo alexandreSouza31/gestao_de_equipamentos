@@ -8,12 +8,10 @@ namespace GestaoDeEquipamentosConsoleApp
     {
         static void Main(string[] args)
         {
-            TelaEquipamento telaEquipamento = new TelaEquipamento();
-            TelaChamado telaChamado = new TelaChamado();
             RepositorioFabricante repositorioFabricante = new RepositorioFabricante();
-            TelaFabricante telaFabricante = new TelaFabricante(telaEquipamento.repositorioFabricante);
-
-            TelaChamado.repositorioEquipamento = telaEquipamento.repositorioEquipamento;
+            TelaFabricante telaFabricante = new TelaFabricante(repositorioFabricante);
+            TelaEquipamento telaEquipamento = new TelaEquipamento(repositorioFabricante, telaFabricante);
+            TelaChamado telaChamado = new TelaChamado();
 
             while (true)
             {
@@ -41,7 +39,7 @@ namespace GestaoDeEquipamentosConsoleApp
                 {
                     while (true)
                     {
-                        bool menuChamado = telaFabricante.Visualizar();
+                        bool menuChamado = telaFabricante.ExibirMenuFabricante(telaFabricante);
                         if (menuChamado == false) break;
                     }
                 }

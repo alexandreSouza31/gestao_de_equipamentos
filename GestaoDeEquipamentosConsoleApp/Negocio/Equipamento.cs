@@ -8,7 +8,7 @@
         public decimal precoAquisicao;
         public string numeroSerie;
         public DateTime dataFabricacao;
-        public string fabricante;
+        public Fabricante fabricante;
 
         public override string ToString()
         {

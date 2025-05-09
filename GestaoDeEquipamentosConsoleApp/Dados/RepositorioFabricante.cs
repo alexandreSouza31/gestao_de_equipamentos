@@ -1,29 +1,40 @@
 ﻿using GestaoDeEquipamentosConsoleApp.Negocio;
 
-public class RepositorioFabricante
+namespace GestaoDeEquipamentosConsoleApp.Dados
 {
-    private string[] fabricantes = new string[100];
-    private int contador = 0;
-
-    public void RegistrarFabricante(string nome)
+    public class RepositorioFabricante
     {
-        // Evita duplicatas
-        for (int i = 0; i < contador; i++)
+        private Fabricante[] fabricantes = new Fabricante[100];
+        private int contador = 0;
+        private int proximoId = 1;
+
+        public void Inserir(Fabricante fabricante)
         {
-            if (fabricantes[i] == nome)
-                return;
+            if (contador < fabricantes.Length)
+            {
+                fabricantes[contador] = fabricante;
+                contador++;
+            }
         }
 
-        fabricantes[contador++] = nome;
-    }
+        public Fabricante[] ObterTodos()
+        {
+            Fabricante[] fabricantesAtivos = new Fabricante[contador];
+            for (int i = 0; i < contador; i++)
+            {
+                fabricantesAtivos[i] = fabricantes[i];
+            }
+            return fabricantesAtivos;
+        }
 
-    public string[] ObterTodos()
-    {
-        return fabricantes.Take(contador).ToArray();
-    }
-
-    public bool ExisteFabricante(string nome)
-    {
-        return fabricantes.Take(contador).Contains(nome);
+        public Fabricante BuscarPorId(int id)
+        {
+            foreach (Fabricante f in fabricantes)
+            {
+                if (f != null && f.id == id)
+                    return f;
+            }
+            return null;
+        }
     }
 }

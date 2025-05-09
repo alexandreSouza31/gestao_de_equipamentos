@@ -4,25 +4,30 @@ namespace GestaoDeEquipamentosConsoleApp.Utils
 {
     public class Direcionar
     {
-        public bool DirecionarParaMenu(bool haEquipamentos, bool menuPrincipal)
+        public bool DirecionarParaMenu(bool haEquipamentos, bool menuPrincipal, string contexto)
         {
+            TelaChamado tela = new TelaChamado();
+
+            string mensagem = $"\nNenhum {contexto} cadastrado ainda!";
+
             if (!haEquipamentos)
             {
-                if (menuPrincipal == true)
+                if(menuPrincipal)
                 {
-                    Console.WriteLine("\nNenhum equipamento cadastrado. Cadastre um equipamento antes de abrir um chamado.");
+                    Console.WriteLine(mensagem);
                     Console.WriteLine("Voltando ao menu principal...");
-                    Thread.Sleep(7000);
+                    Thread.Sleep(4000);
 
-                    TelaChamado tela = new TelaChamado();
                     tela.ExibirMenuPrincipal();
+                    //Console.ReadLine();
                     return false;
                 }
                 else
                 {
-                    Console.WriteLine("\nNenhum chamado cadastrado ainda.");
+                    Console.WriteLine(mensagem);
                     Console.WriteLine("Voltando ao menu de chamados...");
                     Thread.Sleep(4000);
+                    //Console.ReadLine();
                     return false;
                 }
             }
