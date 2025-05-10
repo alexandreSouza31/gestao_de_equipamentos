@@ -44,7 +44,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return opcaoEscolhida;
         }
 
-        public bool ExibirMenuFabricante(TelaFabricante telaFabricante)
+        public bool ExecutarrMenuFabricante(TelaFabricante telaFabricante)
         {
             char opcaoEscolhida = telaFabricante.ApresentarMenu();
 

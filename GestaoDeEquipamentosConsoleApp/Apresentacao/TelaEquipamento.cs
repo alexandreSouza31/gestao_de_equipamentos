@@ -33,7 +33,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return opcaoEscolhida;
         }
 
-        public bool ExibirMenuEquipamento(TelaEquipamento telaEquipamento)
+        public bool ExecutarMenuEquipamento(TelaEquipamento telaEquipamento)
         {
             char opcaoEscolhida = telaEquipamento.ApresentarMenu();
 

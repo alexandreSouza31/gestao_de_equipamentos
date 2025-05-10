@@ -24,7 +24,7 @@ namespace GestaoDeEquipamentosConsoleApp
                 {
                     while (true)
                     {
-                        bool menuEquipamento= telaEquipamento.ExibirMenuEquipamento(telaEquipamento);
+                        bool menuEquipamento= telaEquipamento.ExecutarMenuEquipamento(telaEquipamento);
                         if (menuEquipamento == false) break;
                         
                     }
@@ -33,14 +33,14 @@ namespace GestaoDeEquipamentosConsoleApp
                 {
                     while (true)
                     {
-                        bool menuChamado = telaChamado.ExibirMenuChamado(telaChamado);
+                        bool menuChamado = telaChamado.ExecutarMenuChamado(telaChamado);
                         if (menuChamado == false) break;
                     }
                 }else if (telaEscolhida == '3')
                 {
                     while (true)
                     {
-                        bool menuFabricante = telaFabricante.ExibirMenuFabricante(telaFabricante);
+                        bool menuFabricante = telaFabricante.ExecutarrMenuFabricante(telaFabricante);
                         if (menuFabricante == false) break;
                     }
                 }

@@ -34,7 +34,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return opcaoEscolhida;
         }
 
-        public bool ExibirMenuChamado(TelaChamado telaChamado)
+        public bool ExecutarMenuChamado(TelaChamado telaChamado)
         {
             char opcaoEscolhida = telaChamado.ApresentarMenu();
 
