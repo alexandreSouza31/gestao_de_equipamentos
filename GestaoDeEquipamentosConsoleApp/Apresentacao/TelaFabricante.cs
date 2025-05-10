@@ -44,7 +44,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return opcaoEscolhida;
         }
 
-        public bool ExecutarrMenuFabricante(TelaFabricante telaFabricante)
+        public bool ExecutarMenuFabricante(TelaFabricante telaFabricante)
         {
             char opcaoEscolhida = telaFabricante.ApresentarMenu();
 
@@ -62,7 +62,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     telaFabricante.Editar();
                     break;
                 case '4':
-                    // telaFabricante.Excluir();
+                    telaFabricante.Excluir();
                     break;
                 default:
                     Console.WriteLine("Digite uma opção válida!");
@@ -74,9 +74,18 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
+            //pagina = "Visualizar chamado";
+            //ExibirCabecalho(pagina);
+
             Console.Clear();
             if (exibirCabecalho)
                 Console.WriteLine("----- Fabricantes Registrados -----");
+
+            bool haEquipamentos = VerificarExistenciaFabricantes();
+
+            bool haChamados = repositorioFabricante.fabricantes.Length > 0;
+            bool continuar = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
+            if (!continuar) return false;
 
             Fabricante[] fabricantes = repositorioFabricante.SelecionarFabricantes();
             int encontrados = 0;
@@ -117,6 +126,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Cadastrar()
         {
+            //pagina = "Cadastrar chamado";
+            //ExibirCabecalho(pagina);
+
             Console.Clear();
             Console.WriteLine("----- Cadastro de Fabricante -----");
 
@@ -176,6 +188,54 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
+        public bool Excluir()
+        {
+            //pagina = "Excluir chamado";
+            //ExibirCabecalho(pagina);
+
+            bool haFabricantes = VerificarExistenciaFabricantes();
+            bool continuar = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
+            if (!continuar) return false;
+
+            bool visualizarCadastrados = Visualizar(false, false,false);
+            if (!visualizarCadastrados) return false;
+
+            Fabricante[] fabricantes = repositorioFabricante.fabricantes;
+            bool fabricanteExcluido = false;
+
+            while (true)
+            {
+                Console.WriteLine();
+                Console.Write("Digite o Id do Fabricante para excluir: ");
+                if (!int.TryParse(Console.ReadLine(), out int idEscolhido))
+                {
+                    Console.WriteLine("ID inválido. Tente novamente.");
+                    continue;
+                }
+
+                for (int i = 0; i < fabricantes.Length; i++)
+                {
+                    if (fabricantes[i] == null) continue;
+
+                    if (idEscolhido == fabricantes[i].id)
+                    {
+                        fabricantes[i] = null;
+                        Console.WriteLine();
+                        Console.WriteLine($"Fabricante excluído com sucesso! id: {idEscolhido}");
+                        DigitarEnterEContinuar.Executar();
+                        fabricanteExcluido = true;
+                        return true;
+                    }
+                }
+
+                if (!fabricanteExcluido)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("ID inválido. Tente novamente.");
+                }
+            }
+        }
+
         public static Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
         {
             Fabricante novosDados = new Fabricante();
@@ -209,6 +269,20 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             original.nome = novosDados.nome;
             original.email = novosDados.email;
             original.telefone = novosDados.telefone;
+        }
+
+        public bool VerificarExistenciaFabricantes()
+        {
+            if (repositorioFabricante == null || repositorioFabricante.fabricantes == null)
+                return false;
+
+            Fabricante[] fabricantes = repositorioFabricante.fabricantes;
+
+            for (int i = 0; i < fabricantes.Length; i++)
+            {
+                if (fabricantes[i] != null) return true;
+            }
+            return false;
         }
     }
 }

@@ -40,7 +40,7 @@ namespace GestaoDeEquipamentosConsoleApp
                 {
                     while (true)
                     {
-                        bool menuFabricante = telaFabricante.ExecutarrMenuFabricante(telaFabricante);
+                        bool menuFabricante = telaFabricante.ExecutarMenuFabricante(telaFabricante);
                         if (menuFabricante == false) break;
                     }
                 }
