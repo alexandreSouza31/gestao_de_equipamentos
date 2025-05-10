@@ -12,10 +12,11 @@ namespace GestaoDeEquipamentosConsoleApp
             TelaFabricante telaFabricante = new TelaFabricante(repositorioFabricante);
             TelaEquipamento telaEquipamento = new TelaEquipamento(repositorioFabricante, telaFabricante);
             TelaChamado telaChamado = new TelaChamado();
+            TelaMenu telaPrincipal=new TelaMenu();
 
             while (true)
             {
-                char telaEscolhida = telaChamado.ExibirMenuPrincipal();
+                char telaEscolhida = telaPrincipal.ExibirMenuPrincipal();
 
                 if (telaEscolhida == 'S') break;
 

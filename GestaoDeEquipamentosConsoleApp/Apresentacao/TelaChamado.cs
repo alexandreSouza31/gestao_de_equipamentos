@@ -69,21 +69,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             Console.WriteLine($"----- {nomeSolucao}/{pagina} -----");
             Console.WriteLine();
         }
-        public char ExibirMenuPrincipal()
-        {
-            string nomeSolucao = "Gestão de Equipamentos";
-            Console.Clear();
-            Console.WriteLine($"----- {nomeSolucao} -----");
-            Console.WriteLine();
-
-            char telaEscolhida;
-            Console.WriteLine("1 - Equipamentos");
-            Console.WriteLine("2 - Chamados");
-            Console.WriteLine("3 - Fabricantes");
-            Console.WriteLine("S - Sair");
-            telaEscolhida = Convert.ToChar(Console.ReadLine()!.ToUpper());
-            return telaEscolhida;
-        }
 
         public bool Cadastrar()
         {
@@ -160,11 +145,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool visualizarCadastrados = Visualizar(false, false, false);
-
-            bool haEquipamentos = VerificarExistenciaEquipamentos();
-            bool haChamados = repositorioChamado.contadorChamados > 0;
-            bool continuar = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
-            if (!continuar) return false;
+            if (!visualizarCadastrados) return false;
 
             while (true)
             {

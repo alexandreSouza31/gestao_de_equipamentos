@@ -6,7 +6,7 @@ namespace GestaoDeEquipamentosConsoleApp.Utils
     {
         public bool DirecionarParaMenu(bool haEquipamentos, bool menuPrincipal, string contexto)
         {
-            TelaChamado tela = new TelaChamado();
+            TelaMenu telaPrincipal = new TelaMenu();
 
             string mensagem = $"\nNenhum {contexto} cadastrado ainda!";
 
@@ -18,8 +18,7 @@ namespace GestaoDeEquipamentosConsoleApp.Utils
                     Console.WriteLine("Voltando ao menu principal...");
                     Thread.Sleep(4000);
 
-                    tela.ExibirMenuPrincipal();
-                    //Console.ReadLine();
+                    telaPrincipal.ExibirMenuPrincipal();
                     return false;
                 }
                 else
@@ -27,7 +26,6 @@ namespace GestaoDeEquipamentosConsoleApp.Utils
                     Console.WriteLine(mensagem);
                     Console.WriteLine("Voltando ao menu de chamados...");
                     Thread.Sleep(4000);
-                    //Console.ReadLine();
                     return false;
                 }
             }
