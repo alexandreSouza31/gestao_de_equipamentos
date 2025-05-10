@@ -271,7 +271,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             {
                 int idFabricante = int.Parse(inputIdFabricante);
 
-                Fabricante fabricanteEncontrado = repositorioFabricante.BuscarPorId(idFabricante);
+                Fabricante fabricanteEncontrado = repositorioFabricante.SelecionarFabricantePorId(idFabricante);
 
                 if (fabricanteEncontrado == null)
                 {

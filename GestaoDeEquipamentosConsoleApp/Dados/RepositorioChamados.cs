@@ -24,11 +24,9 @@ namespace GestaoDeEquipamentosConsoleApp.Dados
             {
                 Chamado c = chamados[i];
 
-                if (c == null)
-                    continue;
+                if (c == null) continue;
 
-                if (c.id == idSelecionado)
-                    return c;
+                if (c.id == idSelecionado) return c;
             }
 
             return null;

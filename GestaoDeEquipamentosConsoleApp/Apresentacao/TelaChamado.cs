@@ -94,7 +94,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool haEquipamentos = VerificarExistenciaEquipamentos();
-            bool continuar = direcionar.DirecionarParaMenu(haEquipamentos, true, "Chamado");
+            bool continuar = direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
             if (!continuar) return false;
 
             var novosdados = ObterNovosDados(chamado, false);

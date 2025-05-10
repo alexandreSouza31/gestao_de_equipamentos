@@ -4,11 +4,10 @@ namespace GestaoDeEquipamentosConsoleApp.Dados
 {
     public class RepositorioFabricante
     {
-        private Fabricante[] fabricantes = new Fabricante[100];
+        public Fabricante[] fabricantes = new Fabricante[100];
         public int contadorFabricantes = 0;
-        private int proximoId = 1;
 
-        public void Inserir(Fabricante fabricante)
+        public void CadastrarFabricante(Fabricante fabricante)
         {
             if (contadorFabricantes < fabricantes.Length)
             {
@@ -17,22 +16,20 @@ namespace GestaoDeEquipamentosConsoleApp.Dados
             }
         }
 
-        public Fabricante[] ObterTodos()
+        public Fabricante[] SelecionarFabricantes()
         {
-            Fabricante[] fabricantesAtivos = new Fabricante[contadorFabricantes];
-            for (int i = 0; i < contadorFabricantes; i++)
-            {
-                fabricantesAtivos[i] = fabricantes[i];
-            }
-            return fabricantesAtivos;
+            return fabricantes;
         }
 
-        public Fabricante BuscarPorId(int id)
+        public Fabricante SelecionarFabricantePorId(int id)
         {
-            foreach (Fabricante f in fabricantes)
+            for (int i = 0; i < fabricantes.Length; i++)
             {
-                if (f != null && f.id == id)
-                    return f;
+                Fabricante f = fabricantes[i];
+
+                if (f == null) continue;
+
+                if (f.id == id) return f;
             }
             return null;
         }

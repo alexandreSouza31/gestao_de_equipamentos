@@ -75,30 +75,45 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
             Console.Clear();
-            Console.WriteLine("----- Fabricantes Registrados -----");
+            if (exibirCabecalho)
+                Console.WriteLine("----- Fabricantes Registrados -----");
 
-            var todos = repositorioFabricante.ObterTodos();
+            Fabricante[] fabricantes = repositorioFabricante.SelecionarFabricantes();
+            int encontrados = 0;
 
-            if(msgAoCadastrar)
+            string tamanhoCabecalhoColunas = "{0, -5} | {1, -20} | {2, -25} | {3, -15}";
+
+            for (int i = 0; i < fabricantes.Length; i++)
             {
-                if (todos.Length == 0)
+                Fabricante f = fabricantes[i];
+                if (f == null) continue;
+
+                if (encontrados == 0)
                 {
-                    Console.WriteLine("Nenhum fabricante registrado.");
                     Console.WriteLine();
-                    Console.Write("Digite [Enter] para continuar...");
-                    Console.ReadLine();
-                    return false;
+                    Console.WriteLine(
+                        tamanhoCabecalhoColunas,
+                        "ID".ToUpper(), "NOME".ToUpper(), "EMAIL".ToUpper(), "TELEFONE".ToUpper()
+                    );
                 }
+
+                Console.WriteLine(
+                    tamanhoCabecalhoColunas,
+                    f.id, f.nome, f.email, f.telefone
+                );
+
+                encontrados++;
             }
 
-            foreach (var f in todos)
-            {
-                Console.WriteLine($"ID: {f.id} | Nome: {f.nome} | Email: {f.email} | Telefone: {f.telefone}");
-            }
+            if (encontrados == 0 && msgAoCadastrar)
+                Console.WriteLine("Ainda não há fabricantes! Faça um cadastro!");
 
-            if (digitarEnterEContinuar) DigitarEnterEContinuar.Executar();
-            return true;
+            if (digitarEnterEContinuar)
+                DigitarEnterEContinuar.Executar();
+
+            return encontrados > 0;
         }
+
 
         public bool Cadastrar()
         {
@@ -111,7 +126,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             AtualizarFabricante(fabricante, novosDados);
 
             fabricante.id = Fabricante.numeroId++;
-            repositorioFabricante.Inserir(fabricante);
+            repositorioFabricante.CadastrarFabricante(fabricante);
 
             Console.WriteLine($"\nFabricante '{fabricante.nome}' cadastrado com sucesso! ID: {fabricante.id}");
             Console.Write("Digite [Enter] para continuar...");
@@ -126,7 +141,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             bool visualizarCadastrados = Visualizar(false, false, false);
 
-            var todos = repositorioFabricante.ObterTodos();
+            var todos = repositorioFabricante.SelecionarFabricantes();
             bool haFabricantes = repositorioFabricante.contadorFabricantes > 0;
             bool continuar = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
             if (!continuar) return false;
@@ -141,7 +156,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     continue;
                 }
 
-                Fabricante fabricanteExistente = repositorioFabricante.BuscarPorId(idFabricante);
+                Fabricante fabricanteExistente = repositorioFabricante.SelecionarFabricantePorId(idFabricante);
 
                 if (fabricanteExistente == null)
                 {
