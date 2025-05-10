@@ -10,6 +10,12 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public Direcionar direcionar=new Direcionar();
         Fabricante fabricante = new Fabricante();
 
+        public TelaFabricante()
+        {
+            if (repositorioFabricante == null)
+                repositorioFabricante = new RepositorioFabricante();
+        }
+
         public TelaFabricante(RepositorioFabricante repositorioFabricante)
         {
             this.repositorioFabricante = repositorioFabricante;
@@ -50,10 +56,10 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     telaFabricante.Cadastrar();
                     break;
                 case '2':
-                    telaFabricante.Visualizar();
+                    telaFabricante.Visualizar(true,true,false);
                     break;
                 case '3':
-                    //telaFabricante.Editar();
+                    telaFabricante.Editar();
                     break;
                 case '4':
                     // telaFabricante.Excluir();
@@ -66,20 +72,23 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return true;
         }
 
-        public bool Visualizar()
+        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
             Console.Clear();
             Console.WriteLine("----- Fabricantes Registrados -----");
 
             var todos = repositorioFabricante.ObterTodos();
 
-            if (todos.Length == 0)
+            if(msgAoCadastrar)
             {
-                Console.WriteLine("Nenhum fabricante registrado.");
-                Console.WriteLine();
-                Console.Write("Digite [Enter] para continuar...");
-                Console.ReadLine();
-                return false;
+                if (todos.Length == 0)
+                {
+                    Console.WriteLine("Nenhum fabricante registrado.");
+                    Console.WriteLine();
+                    Console.Write("Digite [Enter] para continuar...");
+                    Console.ReadLine();
+                    return false;
+                }
             }
 
             foreach (var f in todos)
@@ -87,9 +96,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 Console.WriteLine($"ID: {f.id} | Nome: {f.nome} | Email: {f.email} | Telefone: {f.telefone}");
             }
 
-            Console.WriteLine();
-            Console.Write("Digite [Enter] para continuar...");
-            Console.ReadLine();
+            if (digitarEnterEContinuar) DigitarEnterEContinuar.Executar();
             return true;
         }
 
@@ -110,10 +117,54 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return true;
         }
 
+        public bool Editar()
+        {
+            //pagina = "Editar chamado";
+            //ExibirCabecalho(pagina);
+
+            bool visualizarCadastrados = Visualizar(false, false, false);
+
+            var todos = repositorioFabricante.ObterTodos();
+            bool haFabricantes = repositorioFabricante.contadorFabricantes > 0;
+            bool continuar = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
+            if (!continuar) return false;
+
+            while (true)
+            {
+                Console.WriteLine();
+                Console.Write("Digite o Id do fabricante para editar: ");
+                if (!int.TryParse(Console.ReadLine(), out int idFabricante))
+                {
+                    Console.WriteLine("ID inválido. Tente novamente.");
+                    continue;
+                }
+
+                Fabricante fabricanteExistente = repositorioFabricante.BuscarPorId(idFabricante);
+
+                if (fabricanteExistente == null)
+                {
+                    Console.WriteLine("Fabricante não encontrado. Tente novamente.");
+                    continue;
+                }
+
+                Fabricante novosDados = ObterNovosDados(fabricanteExistente, true);
+                novosDados.id = fabricanteExistente.id;
+                AtualizarFabricante(fabricanteExistente, novosDados);
+
+                Visualizar(true, false,false);
+                Console.WriteLine();
+                Console.WriteLine($"{fabricanteExistente.nome} editado com sucesso! id: {fabricanteExistente.id}");
+                DigitarEnterEContinuar.Executar();
+                return true;
+            }
+        }
 
         public static Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
         {
             Fabricante novosDados = new Fabricante();
+            var tela = new TelaFabricante();
+
+            tela.Visualizar(true, false, false);
 
             if (editar)
             {

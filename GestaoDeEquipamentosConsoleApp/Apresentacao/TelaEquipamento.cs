@@ -253,7 +253,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             string inputData = Console.ReadLine()!;
             novosDados.dataFabricacao = string.IsNullOrWhiteSpace(inputData) ? dadosOriginais.dataFabricacao : DateTime.Parse(inputData);
 
-            bool haFabricantes = telaFabricante.Visualizar();
+            bool haFabricantes = telaFabricante.Visualizar(true,false,false);
 
             bool continuar = direcionar.DirecionarParaMenu(haFabricantes, true, "Fabricante");
             if (!continuar) return null;

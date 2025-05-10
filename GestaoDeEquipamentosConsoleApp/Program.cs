@@ -39,8 +39,8 @@ namespace GestaoDeEquipamentosConsoleApp
                 {
                     while (true)
                     {
-                        bool menuChamado = telaFabricante.ExibirMenuFabricante(telaFabricante);
-                        if (menuChamado == false) break;
+                        bool menuFabricante = telaFabricante.ExibirMenuFabricante(telaFabricante);
+                        if (menuFabricante == false) break;
                     }
                 }
             }
