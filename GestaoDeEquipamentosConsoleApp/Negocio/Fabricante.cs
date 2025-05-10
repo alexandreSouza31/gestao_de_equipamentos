@@ -2,7 +2,7 @@
 {
     public class Fabricante
     {
-        public int numeroId = 1;
+        public static int numeroId = 1;
         public int id;
         public string nome;
         public string email;

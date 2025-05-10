@@ -105,10 +105,12 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             Console.Clear();
             Console.WriteLine("----- Cadastro de Fabricante -----");
 
+            Fabricante fabricante = new Fabricante();
+
             var novosDados = ObterNovosDados(fabricante, false);
             AtualizarFabricante(fabricante, novosDados);
 
-            fabricante.id = fabricante.numeroId++;
+            fabricante.id = Fabricante.numeroId++;
             repositorioFabricante.Inserir(fabricante);
 
             Console.WriteLine($"\nFabricante '{fabricante.nome}' cadastrado com sucesso! ID: {fabricante.id}");
