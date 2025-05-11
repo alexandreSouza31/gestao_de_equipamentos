@@ -11,6 +11,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         private RepositorioFabricante repositorioFabricante;
         public TelaFabricante telaFabricante;
         Direcionar direcionar = new Direcionar();
+        public TelaChamado validar = new TelaChamado();
 
         public TelaEquipamento(RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante)
         {
@@ -76,6 +77,10 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             ExibirCabecalho(pagina);
 
+            bool haChamados = validar.VerificarExistenciaChamados();
+            bool continuar = direcionar.DirecionarParaMenu(haChamados, true, "Chamados");
+            if (!continuar) return false;
+
             var novosDados = ObterNovosDados(equipamento, false);
             if (novosDados == null) return false;
 
@@ -89,7 +94,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return true;
         }
 
-        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar)
+        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
             pagina = "Visualizar";
             if (exibirCabecalho) ExibirCabecalho(pagina);
@@ -120,20 +125,22 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 encontrados++;
             }
 
-            if (encontrados == 0) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
+            if (encontrados == 0 && msgAoCadastrar) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
 
             if (digitarEnterEContinuar) DigitarEnterEContinuar.Executar();
             return encontrados > 0;
         }
 
 
-        public void Editar()
+        public bool Editar()
         {
             pagina = "Editar";
             ExibirCabecalho(pagina);
 
-            bool visualizarCadastrados = Visualizar(false, true);
-            if (!visualizarCadastrados) return;
+            bool visualizarCadastrados = Visualizar(false, false, false);
+            bool haEquipamentos = validar.VerificarExistenciaEquipamentos();
+            bool continuar = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
+            if (!continuar) return false;
 
             Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
 
@@ -166,7 +173,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     Console.WriteLine();
                     Console.WriteLine($"{equipamentoSelecionado.nome} editado com sucesso! id: {equipamentoSelecionado.id}");
                     DigitarEnterEContinuar.Executar();
-                    return;
+                    return true;
                 }
                 else
                 {
@@ -176,13 +183,18 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        internal void Excluir()
+        internal bool Excluir()
         {
             pagina = "Excluir";
             ExibirCabecalho(pagina);
 
-            bool visualizarCadastrados = Visualizar(false, true);
-            if (visualizarCadastrados == false) return;
+            var todos = repositorioEquipamento.SelecionarEquipamentos();
+            bool haEquipamentos = repositorioEquipamento.contadorEquipamentos > 0;
+            bool continuar = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
+            if (!continuar) return false;
+
+            bool visualizarCadastrados = Visualizar(false, false, false);
+            if (!visualizarCadastrados) return false;
 
             Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
             bool equipamentoExcluido = false;
@@ -204,7 +216,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                         Console.WriteLine($"Equipamento excluído com sucesso! id: {idEscolhido}");
                         DigitarEnterEContinuar.Executar();
                         equipamentoExcluido |= true;
-                        return;
+                        return true;
                     }
                 }
                 if (equipamentoExcluido == false)

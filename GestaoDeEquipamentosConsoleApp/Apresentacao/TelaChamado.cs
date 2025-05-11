@@ -186,7 +186,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             bool continuar = direcionar.DirecionarParaMenu(haChamados, false,"Chamado");
             if (!continuar) return false;
 
-            bool visualizarCadastrados = Visualizar(false, false);
+            bool visualizarCadastrados = Visualizar(false, false,false);
             if (!visualizarCadastrados) return false;
 
             Chamado[] chamados = repositorioChamado.chamados;
@@ -296,7 +296,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return novosDados;
        }
 
-        private static bool VerificarExistenciaEquipamentos()
+        public bool VerificarExistenciaEquipamentos()
         {
             Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
 
@@ -313,7 +313,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return haEquipamentos;
         }
 
-        private static bool VerificarExistenciaChamados()
+        public bool VerificarExistenciaChamados()
         {
             if (repositorioChamado == null || repositorioChamado.chamados == null)
                 return false;

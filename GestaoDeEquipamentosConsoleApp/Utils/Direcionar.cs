@@ -24,7 +24,7 @@ namespace GestaoDeEquipamentosConsoleApp.Utils
                 else
                 {
                     Console.WriteLine(mensagem);
-                    Console.WriteLine("Voltando ao menu de chamados...");
+                    Console.WriteLine($"Voltando ao menu de {contexto}...");
                     Thread.Sleep(4000);
                     return false;
                 }

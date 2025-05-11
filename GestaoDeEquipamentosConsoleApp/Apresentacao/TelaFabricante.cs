@@ -9,6 +9,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public RepositorioFabricante repositorioFabricante;
         public Direcionar direcionar=new Direcionar();
         Fabricante fabricante = new Fabricante();
+        public string pagina;
 
         public TelaFabricante()
         {
@@ -74,8 +75,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
-            //pagina = "Visualizar chamado";
-            //ExibirCabecalho(pagina);
+            pagina = "Visualizar chamado";
+            ExibirCabecalho(pagina);
 
             Console.Clear();
             if (exibirCabecalho)
@@ -126,8 +127,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Cadastrar()
         {
-            //pagina = "Cadastrar chamado";
-            //ExibirCabecalho(pagina);
+            pagina = "Cadastrar chamado";
+            ExibirCabecalho(pagina);
 
             Console.Clear();
             Console.WriteLine("----- Cadastro de Fabricante -----");
@@ -148,8 +149,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Editar()
         {
-            //pagina = "Editar chamado";
-            //ExibirCabecalho(pagina);
+            pagina = "Editar chamado";
+            ExibirCabecalho(pagina);
 
             bool visualizarCadastrados = Visualizar(false, false, false);
 
@@ -190,8 +191,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Excluir()
         {
-            //pagina = "Excluir chamado";
-            //ExibirCabecalho(pagina);
+            pagina = "Excluir chamado";
+            ExibirCabecalho(pagina);
 
             bool haFabricantes = VerificarExistenciaFabricantes();
             bool continuar = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
