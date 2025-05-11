@@ -4,32 +4,25 @@ namespace GestaoDeEquipamentosConsoleApp.Utils
 {
     public class Direcionar
     {
-        public bool DirecionarParaMenu(bool haEquipamentos, bool menuPrincipal, string contexto)
+        public ResultadoDirecionamento DirecionarParaMenu(bool haItens, bool menuPrincipal, string contexto)
         {
-            TelaMenu telaPrincipal = new TelaMenu();
+            if (haItens)
+                return ResultadoDirecionamento.Continuar;
 
-            string mensagem = $"\nNenhum {contexto} cadastrado ainda!";
+            Console.WriteLine($"\nNenhum {contexto} cadastrado ainda!");
 
-            if (!haEquipamentos)
+            if (menuPrincipal)
             {
-                if(menuPrincipal)
-                {
-                    Console.WriteLine(mensagem);
-                    Console.WriteLine("Voltando ao menu principal...");
-                    Thread.Sleep(4000);
-
-                    telaPrincipal.ExibirMenuPrincipal();
-                    return false;
-                }
-                else
-                {
-                    Console.WriteLine(mensagem);
-                    Console.WriteLine($"Voltando ao menu de {contexto}...");
-                    Thread.Sleep(4000);
-                    return false;
-                }
+                Console.WriteLine("Voltando ao menu principal...");
+                Thread.Sleep(3000);
+                return ResultadoDirecionamento.VoltarMenuPrincipal;
             }
-            return true;
+            else
+            {
+                Console.WriteLine($"Voltando ao menu de {contexto}s...");
+                Thread.Sleep(3000);
+                return ResultadoDirecionamento.VoltarMenuContexto;
+            }
         }
     }
 }

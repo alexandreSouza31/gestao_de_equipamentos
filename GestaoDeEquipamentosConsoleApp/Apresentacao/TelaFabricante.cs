@@ -85,8 +85,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             bool haEquipamentos = VerificarExistenciaFabricantes();
 
             bool haChamados = repositorioFabricante.fabricantes.Length > 0;
-            bool continuar = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
-            if (!continuar) return false;
+            var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             Fabricante[] fabricantes = repositorioFabricante.SelecionarFabricantes();
             int encontrados = 0;
@@ -152,13 +152,13 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Editar chamado";
             ExibirCabecalho(pagina);
 
-            bool visualizarCadastrados = Visualizar(false, false, false);
 
             var todos = repositorioFabricante.SelecionarFabricantes();
             bool haFabricantes = repositorioFabricante.contadorFabricantes > 0;
-            bool continuar = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
-            if (!continuar) return false;
+            var resultado = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
 
+            bool visualizarCadastrados = Visualizar(false, false, false);
             while (true)
             {
                 Console.WriteLine();
@@ -195,8 +195,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool haFabricantes = VerificarExistenciaFabricantes();
-            bool continuar = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
-            if (!continuar) return false;
+            var resultado = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             bool visualizarCadastrados = Visualizar(false, false,false);
             if (!visualizarCadastrados) return false;

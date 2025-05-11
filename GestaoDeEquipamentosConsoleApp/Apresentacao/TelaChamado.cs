@@ -43,7 +43,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             switch (opcaoEscolhida)
             {
                 case '1':
-                    telaChamado.Cadastrar();
+                    bool continuar = telaChamado.Cadastrar();
+                    if (!continuar) return false;
                     break;
                 case '2':
                     telaChamado.Visualizar(true, true);
@@ -79,8 +80,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool haEquipamentos = VerificarExistenciaEquipamentos();
-            bool continuar = direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
-            if (!continuar) return false;
+            var resultado = direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             var novosdados = ObterNovosDados(chamado, false);
             AtualizarChamado(chamado, novosdados);
@@ -100,8 +101,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             bool haEquipamentos = VerificarExistenciaEquipamentos();
 
             bool haChamados = repositorioChamado.contadorChamados > 0;
-            bool continuar = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
-            if (!continuar) return false;
+            var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             Chamado[] chamados = repositorioChamado.SelecionarChamados();
             int encontrados = 0;
@@ -183,8 +184,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool haChamados = VerificarExistenciaChamados();
-            bool continuar = direcionar.DirecionarParaMenu(haChamados, false,"Chamado");
-            if (!continuar) return false;
+            var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             bool visualizarCadastrados = Visualizar(false, false,false);
             if (!visualizarCadastrados) return false;

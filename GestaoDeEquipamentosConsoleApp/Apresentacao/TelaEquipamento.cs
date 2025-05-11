@@ -43,7 +43,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             switch (opcaoEscolhida)
             {
                 case '1':
-                    telaEquipamento.Cadastrar();
+                    bool continuar = telaEquipamento.Cadastrar();
+                    if (!continuar) return false;
                     break;
                 case '2':
                     telaEquipamento.Visualizar(true, true);
@@ -78,8 +79,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool haChamados = validar.VerificarExistenciaChamados();
-            bool continuar = direcionar.DirecionarParaMenu(haChamados, true, "Chamados");
-            if (!continuar) return false;
+            var resultado = direcionar.DirecionarParaMenu(haChamados, true, "Fabricante");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             var novosDados = ObterNovosDados(equipamento, false);
             if (novosDados == null) return false;
@@ -139,8 +140,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             bool visualizarCadastrados = Visualizar(false, false, false);
             bool haEquipamentos = validar.VerificarExistenciaEquipamentos();
-            bool continuar = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
-            if (!continuar) return false;
+            var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
 
@@ -190,8 +191,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             var todos = repositorioEquipamento.SelecionarEquipamentos();
             bool haEquipamentos = repositorioEquipamento.contadorEquipamentos > 0;
-            bool continuar = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
-            if (!continuar) return false;
+            var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             bool visualizarCadastrados = Visualizar(false, false, false);
             if (!visualizarCadastrados) return false;
@@ -267,8 +268,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             bool haFabricantes = telaFabricante.Visualizar(true,false,false);
 
-            bool continuar = direcionar.DirecionarParaMenu(haFabricantes, true, "Fabricante");
-            if (!continuar) return null;
+            var resultado = direcionar.DirecionarParaMenu(haFabricantes, true, "Fabricante");
+            if (resultado != ResultadoDirecionamento.Continuar) return null;
 
             string etiquetaFabricante = editar ? $"ID do Fabricante ({dadosOriginais.fabricante?.id}): " : "ID do Fabricante: ";
             Console.Write(etiquetaFabricante);
