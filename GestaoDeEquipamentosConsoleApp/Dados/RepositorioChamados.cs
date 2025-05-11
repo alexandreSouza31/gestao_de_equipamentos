@@ -31,5 +31,14 @@ namespace GestaoDeEquipamentosConsoleApp.Dados
 
             return null;
         }
+
+        public bool VerificarExistenciaChamados()
+        {
+            for (int i = 0; i < chamados.Length; i++)
+            {
+                if (chamados[i] != null) return true;
+            }
+            return false;
+        }
     }
 }

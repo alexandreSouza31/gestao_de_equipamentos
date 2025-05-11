@@ -33,5 +33,14 @@ namespace GestaoDeEquipamentosConsoleApp.Dados
 
             return null;
         }
+
+        public bool VerificarExistenciaEquipamentos()
+        {
+            for (int i = 0; i < equipamentos.Length; i++)
+            {
+                if (equipamentos[i] != null) return true;
+            }
+            return false;
+        }
     }
 }

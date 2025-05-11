@@ -8,11 +8,14 @@ namespace GestaoDeEquipamentosConsoleApp
     {
         static void Main(string[] args)
         {
+            RepositorioEquipamento repositorioEquipamento = new RepositorioEquipamento();
             RepositorioFabricante repositorioFabricante = new RepositorioFabricante();
+            RepositorioChamado repositorioChamado = new RepositorioChamado();
+
             TelaFabricante telaFabricante = new TelaFabricante(repositorioFabricante);
-            TelaEquipamento telaEquipamento = new TelaEquipamento(repositorioFabricante, telaFabricante);
-            TelaChamado telaChamado = new TelaChamado();
-            TelaMenu telaPrincipal=new TelaMenu();
+            TelaEquipamento telaEquipamento = new TelaEquipamento(repositorioEquipamento, repositorioFabricante, telaFabricante);
+            TelaChamado telaChamado = new TelaChamado(repositorioChamado, repositorioEquipamento);
+            TelaMenu telaPrincipal = new TelaMenu();
 
             while (true)
             {

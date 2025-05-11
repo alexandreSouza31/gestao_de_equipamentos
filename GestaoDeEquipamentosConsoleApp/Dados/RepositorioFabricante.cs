@@ -33,5 +33,14 @@ namespace GestaoDeEquipamentosConsoleApp.Dados
             }
             return null;
         }
+
+        public bool VerificarExistenciaFabricantes()
+        {
+            for (int i = 0; i < fabricantes.Length; i++)
+            {
+                if (fabricantes[i] != null) return true;
+            }
+            return false;
+        }
     }
 }

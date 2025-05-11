@@ -6,19 +6,18 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
     public class TelaChamado
     {
-        public TelaChamado()
-        {
-            if (repositorioChamado == null)
-                repositorioChamado = new RepositorioChamado();
-
-            if (repositorioEquipamento == null)
-                repositorioEquipamento = new RepositorioEquipamento();
-        }
 
         public string pagina;
-        public static RepositorioChamado repositorioChamado;
-        public static RepositorioEquipamento repositorioEquipamento;
-        Direcionar direcionar=new Direcionar();
+        public RepositorioChamado repositorioChamado;
+        public RepositorioEquipamento repositorioEquipamento;
+        Direcionar direcionar = new Direcionar();
+
+        public TelaChamado(RepositorioChamado repositorioChamado, RepositorioEquipamento repositorioEquipamento)
+        {
+            this.repositorioChamado = repositorioChamado;
+            this.repositorioEquipamento = repositorioEquipamento;
+        }
+
         public char ApresentarMenu()
         {
             ExibirCabecalho("");
@@ -75,16 +74,15 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         {
             pagina = "Cadastrar chamado";
             Chamado chamado = new Chamado();
-            Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
 
             ExibirCabecalho(pagina);
 
-            bool haEquipamentos = VerificarExistenciaEquipamentos();
+            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaEquipamentos();
             var resultado = direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
-            var novosdados = ObterNovosDados(chamado, false);
-            AtualizarChamado(chamado, novosdados);
+            var novosdados = ObterNovosDados(chamado, false ,this);
+            AtualizarChamado(chamado, novosdados, repositorioChamado);
 
             chamado.id = Chamado.numeroId++;
             repositorioChamado.CadastrarEquipamento(chamado);
@@ -98,11 +96,15 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Visualizar chamado";
             if (exibirCabecalho) ExibirCabecalho(pagina);
 
-            bool haEquipamentos = VerificarExistenciaEquipamentos();
+            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaEquipamentos();
 
-            bool haChamados = repositorioChamado.contadorChamados > 0;
-            var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
-            if (resultado != ResultadoDirecionamento.Continuar) return false;
+            if (msgAoCadastrar==true)
+            {
+                bool haChamados = repositorioChamado.contadorChamados > 0;
+                var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
+                if (resultado != ResultadoDirecionamento.Continuar) return false;
+
+            }
 
             Chamado[] chamados = repositorioChamado.SelecionarChamados();
             int encontrados = 0;
@@ -166,9 +168,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     continue;
                 }
 
-                Chamado novosDados = ObterNovosDados(chamadoExistente, true);
+                Chamado novosDados = ObterNovosDados(chamadoExistente, true,this);
                 novosDados.id = chamadoExistente.id;
-                AtualizarChamado(chamadoExistente, novosDados);
+                AtualizarChamado(chamadoExistente, novosDados,repositorioChamado);
 
                 Visualizar(true, false);
                 Console.WriteLine();
@@ -183,7 +185,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Excluir chamado";
             ExibirCabecalho(pagina);
 
-            bool haChamados = VerificarExistenciaChamados();
+            bool haChamados = repositorioChamado.VerificarExistenciaChamados();
             var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
@@ -226,12 +228,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        public static Chamado ObterNovosDados(Chamado dadosOriginais, bool editar)
+        public static Chamado ObterNovosDados(Chamado dadosOriginais, bool editar, TelaChamado telaChamado)
         {
             Chamado novosDados = new Chamado();
-            var tela = new TelaChamado();
 
-            tela.Visualizar(true, false, false);
+            telaChamado.Visualizar(true, false, false);
 
             if (editar == true)
             {
@@ -266,6 +267,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             while (equipamentoSelecionado == null)
             {
+                telaChamado.Visualizar(true, false, false);
+                Console.WriteLine();
                 Console.Write("Digite o ID do equipamento que deseja associar: ");
                 string etiquetaEquipamento = editar ? $"Equipamento ({dadosOriginais.equipamento.nome}): " : "";
                 Console.Write(etiquetaEquipamento);
@@ -280,7 +283,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                 if (int.TryParse(inputId, out int inputEquipamentoId))
                 {
-                    equipamentoSelecionado = repositorioEquipamento.SelecionarEquipamentoPorId(inputEquipamentoId);
+                    equipamentoSelecionado = telaChamado.repositorioEquipamento.SelecionarEquipamentoPorId(inputEquipamentoId);
                     if (equipamentoSelecionado == null)
                     {
                         Console.WriteLine("\nEquipamento não encontrado. Tente novamente.");
@@ -297,38 +300,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return novosDados;
        }
 
-        public bool VerificarExistenciaEquipamentos()
-        {
-            Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
-
-            bool haEquipamentos = false;
-            for (int i = 0; i < equipamentos.Length; i++)
-            {
-                if (equipamentos[i] != null)
-                {
-                    haEquipamentos = true;
-                    break;
-                }
-            }
-
-            return haEquipamentos;
-        }
-
-        public bool VerificarExistenciaChamados()
-        {
-            if (repositorioChamado == null || repositorioChamado.chamados == null)
-                return false;
-
-            Chamado[] chamados = repositorioChamado.chamados;
-
-            for (int i = 0; i < chamados.Length; i++)
-            {
-                if (chamados[i] != null) return true;
-            }
-            return false;
-        }
-
-        public static void AtualizarChamado(Chamado dadosOriginais, Chamado novosDados)
+        public static void AtualizarChamado(Chamado dadosOriginais, Chamado novosDados, RepositorioChamado repositorioChamado)
         {
             dadosOriginais.titulo = novosDados.titulo;
             dadosOriginais.descricao = novosDados.descricao;

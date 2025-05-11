@@ -7,14 +7,14 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
     public class TelaEquipamento
     {
         public string pagina;
-        private RepositorioEquipamento repositorioEquipamento = new RepositorioEquipamento();
+        private RepositorioEquipamento repositorioEquipamento;
         private RepositorioFabricante repositorioFabricante;
         public TelaFabricante telaFabricante;
         Direcionar direcionar = new Direcionar();
-        public TelaChamado validar = new TelaChamado();
 
-        public TelaEquipamento(RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante)
+        public TelaEquipamento(RepositorioEquipamento repositorioEquipamento, RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante)
         {
+            this.repositorioEquipamento = repositorioEquipamento;
             this.repositorioFabricante = repositorioFabricante;
             this.telaFabricante = telaFabricante;
         }
@@ -78,8 +78,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             ExibirCabecalho(pagina);
 
-            bool haChamados = validar.VerificarExistenciaChamados();
-            var resultado = direcionar.DirecionarParaMenu(haChamados, true, "Fabricante");
+            bool haFabricante = repositorioFabricante.VerificarExistenciaFabricantes();
+            var resultado = direcionar.DirecionarParaMenu(haFabricante, true, "Fabricante");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             var novosDados = ObterNovosDados(equipamento, false);
@@ -139,7 +139,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool visualizarCadastrados = Visualizar(false, false, false);
-            bool haEquipamentos = validar.VerificarExistenciaEquipamentos();
+            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaEquipamentos();
             var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
