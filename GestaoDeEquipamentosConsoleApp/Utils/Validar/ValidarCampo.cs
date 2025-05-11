@@ -1,6 +1,6 @@
 namespace GestaoDeEquipamentosConsoleApp.Utils
 {
-    public class Validar
+    public class ValidarCampo
     {
         public static bool ValidarQtdCaracteres(string nome)
         {

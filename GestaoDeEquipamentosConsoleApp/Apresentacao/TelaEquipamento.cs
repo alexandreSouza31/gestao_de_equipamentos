@@ -204,7 +204,15 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             {
                 Console.WriteLine();
                 Console.Write("Digite o Id do equipamento para excluir: ");
-                int idEscolhido = Convert.ToInt32(Console.ReadLine()!);
+
+                bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
+                var equipamento = repositorioEquipamento.SelecionarEquipamentoPorId(idEscolhido);
+
+                if (!idValido && equipamento == null)
+                {
+                    Console.WriteLine("ID inválido. Tente novamente.");
+                    continue;
+                }
 
                 for (int i = 0; i < equipamentos.Length; i++)
                 {
@@ -212,18 +220,17 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                     if (idEscolhido == equipamentos[i].id)
                     {
-                        equipamentos[i] = null;
+                        DesejaExcluir desejaExcluir = new DesejaExcluir();
+                        var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(equipamento.nome);
+                        if (vaiExcluir != "S") return false;
+
                         Console.WriteLine();
-                        Console.WriteLine($"Equipamento excluído com sucesso! id: {idEscolhido}");
+                        Console.WriteLine($"Equipamento {equipamento.nome} excluído com sucesso! id: {idEscolhido}");
+                        equipamentos[i] = null;
                         DigitarEnterEContinuar.Executar();
                         equipamentoExcluido |= true;
                         return true;
                     }
-                }
-                if (equipamentoExcluido == false)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("ID inválido. Tente novamente.");
                 }
             }
         }

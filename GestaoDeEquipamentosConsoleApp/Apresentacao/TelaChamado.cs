@@ -199,7 +199,16 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             {
                 Console.WriteLine();
                 Console.Write("Digite o Id do chamado para excluir: ");
-                if (!int.TryParse(Console.ReadLine(), out int idEscolhido))
+                //if (!int.TryParse(Console.ReadLine(), out int idEscolhido))
+                //{
+                //    Console.WriteLine("ID inválido. Tente novamente.");
+                //    continue;
+                //}
+
+                bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
+                var chamado = repositorioChamado.SelecionarChamadoPorId(idEscolhido);
+
+                if (!idValido && chamado == null)
                 {
                     Console.WriteLine("ID inválido. Tente novamente.");
                     continue;
@@ -211,19 +220,17 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                     if (idEscolhido == chamados[i].id)
                     {
-                        chamados[i] = null;
+                        DesejaExcluir desejaExcluir = new DesejaExcluir();
+                        var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(chamado.titulo);
+                        if (vaiExcluir != "S") return false;
+
                         Console.WriteLine();
-                        Console.WriteLine($"Chamado excluído com sucesso! id: {idEscolhido}");
+                        Console.WriteLine($"Chamado {chamado.titulo} excluído com sucesso! id: {idEscolhido}");
+                        chamados[i] = null;
                         DigitarEnterEContinuar.Executar();
                         chamadoExcluido = true;
                         return true;
                     }
-                }
-
-                if (!chamadoExcluido)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("ID inválido. Tente novamente.");
                 }
             }
         }

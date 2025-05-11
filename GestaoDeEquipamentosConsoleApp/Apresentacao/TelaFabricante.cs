@@ -208,7 +208,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             {
                 Console.WriteLine();
                 Console.Write("Digite o Id do Fabricante para excluir: ");
-                if (!int.TryParse(Console.ReadLine(), out int idEscolhido))
+
+                bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
+                var fabricante = repositorioFabricante.SelecionarFabricantePorId(idEscolhido);
+
+                if (!idValido && fabricante == null)
                 {
                     Console.WriteLine("ID inválido. Tente novamente.");
                     continue;
@@ -220,19 +224,17 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                     if (idEscolhido == fabricantes[i].id)
                     {
-                        fabricantes[i] = null;
+                        DesejaExcluir desejaExcluir = new DesejaExcluir();
+                        var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(fabricante.nome);
+                        if (vaiExcluir != "S") return false;
+
                         Console.WriteLine();
-                        Console.WriteLine($"Fabricante excluído com sucesso! id: {idEscolhido}");
+                        Console.WriteLine($"Fabricante {fabricante.nome} excluído com sucesso! id: {idEscolhido}");
+                        fabricantes[i] = null;
                         DigitarEnterEContinuar.Executar();
                         fabricanteExcluido = true;
                         return true;
                     }
-                }
-
-                if (!fabricanteExcluido)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("ID inválido. Tente novamente.");
                 }
             }
         }
