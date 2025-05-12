@@ -14,7 +14,7 @@ namespace GestaoDeEquipamentosConsoleApp
 
             TelaFabricante telaFabricante = new TelaFabricante(repositorioFabricante);
             TelaEquipamento telaEquipamento = new TelaEquipamento(repositorioEquipamento, repositorioFabricante, telaFabricante);
-            TelaChamado telaChamado = new TelaChamado(repositorioChamado, repositorioEquipamento);
+            TelaChamado telaChamado = new TelaChamado(repositorioChamado, repositorioEquipamento,telaEquipamento);
             TelaMenu telaPrincipal = new TelaMenu();
 
             while (true)

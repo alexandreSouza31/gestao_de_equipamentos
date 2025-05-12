@@ -12,10 +12,15 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public RepositorioEquipamento repositorioEquipamento;
         Direcionar direcionar = new Direcionar();
 
-        public TelaChamado(RepositorioChamado repositorioChamado, RepositorioEquipamento repositorioEquipamento)
+        private RepositorioFabricante repositorioFabricante;
+        public TelaEquipamento telaEquipamento;
+        public TelaFabricante telaFabricante;
+
+        public TelaChamado(RepositorioChamado repositorioChamado, RepositorioEquipamento repositorioEquipamento, TelaEquipamento telaEquipamento)
         {
             this.repositorioChamado = repositorioChamado;
             this.repositorioEquipamento = repositorioEquipamento;
+            this.telaEquipamento = telaEquipamento;
         }
 
         public char ApresentarMenu()
@@ -193,17 +198,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             if (!visualizarCadastrados) return false;
 
             Chamado[] chamados = repositorioChamado.chamados;
-            bool chamadoExcluido = false;
 
             while (true)
             {
                 Console.WriteLine();
                 Console.Write("Digite o Id do chamado para excluir: ");
-                //if (!int.TryParse(Console.ReadLine(), out int idEscolhido))
-                //{
-                //    Console.WriteLine("ID inválido. Tente novamente.");
-                //    continue;
-                //}
 
                 bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
                 var chamado = repositorioChamado.SelecionarChamadoPorId(idEscolhido);
@@ -228,7 +227,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                         Console.WriteLine($"Chamado {chamado.titulo} excluído com sucesso! id: {idEscolhido}");
                         chamados[i] = null;
                         DigitarEnterEContinuar.Executar();
-                        chamadoExcluido = true;
                         return true;
                     }
                 }
@@ -274,7 +272,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             while (equipamentoSelecionado == null)
             {
-                telaChamado.Visualizar(true, false, false);
+                telaChamado.telaEquipamento.Visualizar(true, false, false);
                 Console.WriteLine();
                 Console.Write("Digite o ID do equipamento que deseja associar: ");
                 string etiquetaEquipamento = editar ? $"Equipamento ({dadosOriginais.equipamento.nome}): " : "";
@@ -300,6 +298,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 {
                     Console.WriteLine("Entrada inválida. Digite um número de ID ou pressione Enter para manter o atual.");
                 }
+                DigitarEnterEContinuar.Executar(true);
             }
 
             novosDados.equipamento = equipamentoSelecionado;

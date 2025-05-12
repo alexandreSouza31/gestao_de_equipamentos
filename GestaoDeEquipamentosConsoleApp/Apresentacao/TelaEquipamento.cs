@@ -198,7 +198,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             if (!visualizarCadastrados) return false;
 
             Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
-            bool equipamentoExcluido = false;
 
             while (true)
             {
@@ -228,7 +227,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                         Console.WriteLine($"Equipamento {equipamento.nome} excluído com sucesso! id: {idEscolhido}");
                         equipamentos[i] = null;
                         DigitarEnterEContinuar.Executar();
-                        equipamentoExcluido |= true;
                         return true;
                     }
                 }

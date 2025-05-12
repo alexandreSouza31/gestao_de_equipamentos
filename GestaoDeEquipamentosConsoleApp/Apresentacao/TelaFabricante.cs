@@ -82,7 +82,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             if (exibirCabecalho)
                 Console.WriteLine("----- Fabricantes Registrados -----");
 
-            bool haEquipamentos = VerificarExistenciaFabricantes();
+            bool haEquipamentos = repositorioFabricante.VerificarExistenciaFabricantes();
 
             bool haChamados = repositorioFabricante.fabricantes.Length > 0;
             var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
@@ -194,7 +194,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Excluir chamado";
             ExibirCabecalho(pagina);
 
-            bool haFabricantes = VerificarExistenciaFabricantes();
+            bool haFabricantes = repositorioFabricante.VerificarExistenciaFabricantes();
             var resultado = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
@@ -202,7 +202,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             if (!visualizarCadastrados) return false;
 
             Fabricante[] fabricantes = repositorioFabricante.fabricantes;
-            bool fabricanteExcluido = false;
 
             while (true)
             {
@@ -232,7 +231,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                         Console.WriteLine($"Fabricante {fabricante.nome} excluído com sucesso! id: {idEscolhido}");
                         fabricantes[i] = null;
                         DigitarEnterEContinuar.Executar();
-                        fabricanteExcluido = true;
                         return true;
                     }
                 }
@@ -272,20 +270,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             original.nome = novosDados.nome;
             original.email = novosDados.email;
             original.telefone = novosDados.telefone;
-        }
-
-        public bool VerificarExistenciaFabricantes()
-        {
-            if (repositorioFabricante == null || repositorioFabricante.fabricantes == null)
-                return false;
-
-            Fabricante[] fabricantes = repositorioFabricante.fabricantes;
-
-            for (int i = 0; i < fabricantes.Length; i++)
-            {
-                if (fabricantes[i] != null) return true;
-            }
-            return false;
         }
     }
 }
