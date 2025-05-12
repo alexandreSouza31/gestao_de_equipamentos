@@ -1,6 +1,6 @@
 ﻿﻿﻿# Gestão de Equipamentos 🛠️ 
 
-Este é um sistema de controle de equipamentos, desenvolvido em C#, com foco no cadastro, visualização, edição e exclusão de registros de equipamentos.
+Este é um sistema de controle de equipamentos, desenvolvido em C#, com foco no cadastro, visualização, edição e exclusão de registros de equipamentos, chamados, e fabricantes.
 
 ## Sumário
 
@@ -18,7 +18,7 @@ Este é um sistema de controle de equipamentos, desenvolvido em C#, com foco no 
 
 ### Mídia 📷
 ##### GIF da aplicação - Clique no GIF para dar Play/Pause
-![image](https://i.imgur.com/v2iBHc6.gif)
+![image](https://i.imgur.com/sdpXRJM.gif)
 
 ### Funcionalidades✅ 
 - Cadastro de equipamentos com dados como:
@@ -33,6 +33,25 @@ Este é um sistema de controle de equipamentos, desenvolvido em C#, com foco no 
 
    - Fabricante
 
+- Cadastro de Chamados com dados como:
+
+   - Título
+
+   - Descrição
+
+   - Data de abertura
+
+   - associação de equipamento
+
+- Cadastro de Fabricantes com dados como:
+
+   - Nome
+
+   - Email
+
+   - Telefone
+
+
 - Visualização em formato de tabela
 
 - Edição de dados já cadastrados (com possibilidade de manter campos inalterados)
@@ -44,7 +63,6 @@ Este é um sistema de controle de equipamentos, desenvolvido em C#, com foco no 
 - Mensagens interativas e prompts amigáveis no console
 
 
-
 ### Desenvolvido com 🚀
 
 [![My Skills](https://skillicons.dev/icons?i=cs,dotnet,git&theme=light)](https://skillicons.dev)
@@ -54,21 +72,33 @@ Este é um sistema de controle de equipamentos, desenvolvido em C#, com foco no 
 ```
 ├── GestaoDeEquipamentos.ConsoleApp
 │   ├── Apresentacao
-│   │   └── TelaEquipamento.cs
+│   │   ├── TelaChamado.cs
+│   │   ├── TelaEquipamento.cs
+│   │   ├── TelaFabricante.cs
+│   │   └── TelaMenu.cs
 │   ├── Dados
-│   │   └── RepositorioEquipamento.cs
+│   │   ├── RepositorioChamado.cs
+│   │   ├── RepositorioEquipamento.cs
+│   │   └── RepositorioFabricante.cs
 │   ├── Negocio
-│   │   └── Equipamento.cs
+│   │   ├── Chamado.cs
+│   │   ├── Equipamento.cs
+│   │   └── Fabricante.cs
 │   ├── Requisitos
 │   │   └── requisitos_gestaoDeEquipamentos.txt
 │   ├── Utils
+│   │   ├── Validar
+│   │   │   └── ValidarCampo.cs
+│   │   ├── DesejaExcluir.cs
 │   │   ├── DigitarEnterEContinuar.cs
-│   │   └── Validar
-│   │       └──Validar.cs
+│   │   ├── Direcionar.cs
+│   │   └── ResultadoDirecionamento.cs
 │   └── Program.cs
+├── .gitattributes
 ├── .gitignore
 ├── GestaoDeEquipamentos.sln
 └── README.md
+
 ```
 
 
