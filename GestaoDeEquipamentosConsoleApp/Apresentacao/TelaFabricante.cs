@@ -6,19 +6,14 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
     public class TelaFabricante
     {
-        public RepositorioFabricante repositorioFabricante;
+        private RepositorioFabricante repositorioFabricante;
         public Direcionar direcionar=new Direcionar();
-        //Fabricante fabricante = new Fabricante(nome, email, telefone);
         public string pagina;
-
-        public TelaFabricante()
-        {
-            if (repositorioFabricante == null)
-                repositorioFabricante = new RepositorioFabricante();
-        }
 
         public TelaFabricante(RepositorioFabricante repositorioFabricante)
         {
+            if (repositorioFabricante == null)
+                repositorioFabricante = new RepositorioFabricante();
             this.repositorioFabricante = repositorioFabricante;
         }
 
@@ -239,7 +234,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public static Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
         {
-            var tela = new TelaFabricante();
+            var tela = new TelaFabricante(null);
 
             tela.Visualizar(true, false, false);
 
