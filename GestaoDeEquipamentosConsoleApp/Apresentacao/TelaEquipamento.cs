@@ -142,7 +142,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
-            Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
+            Equipamento[] equipamentos = repositorioEquipamento.SelecionarEquipamentos();
 
             while (true)
             {
@@ -189,14 +189,14 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             var todos = repositorioEquipamento.SelecionarEquipamentos();
-            bool haEquipamentos = repositorioEquipamento.contadorEquipamentos > 0;
+            bool haEquipamentos = repositorioEquipamento.SelecionarEquipamentos().Length > 0;
             var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             bool visualizarCadastrados = Visualizar(false, false, false);
             if (!visualizarCadastrados) return false;
 
-            Equipamento[] equipamentos = repositorioEquipamento.equipamentos;
+            Equipamento[] equipamentos = repositorioEquipamento.SelecionarEquipamentos();
 
             while (true)
             {

@@ -105,7 +105,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             if (msgAoCadastrar==true)
             {
-                bool haChamados = repositorioChamado.contadorChamados > 0;
+                bool haChamados = repositorioChamado.SelecionarChamados().Length > 0;
                 var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
                 if (resultado != ResultadoDirecionamento.Continuar) return false;
 
@@ -197,7 +197,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             bool visualizarCadastrados = Visualizar(false, false,false);
             if (!visualizarCadastrados) return false;
 
-            Chamado[] chamados = repositorioChamado.chamados;
+            Chamado[] chamados = repositorioChamado.SelecionarChamados();
 
             while (true)
             {
@@ -300,11 +300,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             dadosOriginais.dataAbertura = novosDados.dataAbertura;
             dadosOriginais.equipamento = novosDados.equipamento;
 
-            for (int i = 0; i < repositorioChamado.chamados.Length; i++)
+            for (int i = 0; i < repositorioChamado.SelecionarChamados().Length; i++)
             {
-                if (repositorioChamado.chamados[i]?.id == dadosOriginais.id)
+                if (repositorioChamado.SelecionarChamados()[i]?.id == dadosOriginais.id)
                 {
-                    repositorioChamado.chamados[i] = dadosOriginais;
+                    repositorioChamado.SelecionarChamados()[i] = dadosOriginais;
                     break;
                 }
             }

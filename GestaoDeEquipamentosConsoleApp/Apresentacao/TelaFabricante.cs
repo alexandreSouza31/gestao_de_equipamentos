@@ -84,7 +84,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             bool haEquipamentos = repositorioFabricante.VerificarExistenciaFabricantes();
 
-            bool haChamados = repositorioFabricante.fabricantes.Length > 0;
+            bool haChamados = repositorioFabricante.SelecionarFabricantes().Length > 0;
             var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
@@ -154,7 +154,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
 
             var todos = repositorioFabricante.SelecionarFabricantes();
-            bool haFabricantes = repositorioFabricante.contadorFabricantes > 0;
+            bool haFabricantes = repositorioFabricante.SelecionarFabricantes().Length > 0;
             var resultado = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
@@ -201,7 +201,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             bool visualizarCadastrados = Visualizar(false, false,false);
             if (!visualizarCadastrados) return false;
 
-            Fabricante[] fabricantes = repositorioFabricante.fabricantes;
+            Fabricante[] fabricantes = repositorioFabricante.SelecionarFabricantes();
 
             while (true)
             {

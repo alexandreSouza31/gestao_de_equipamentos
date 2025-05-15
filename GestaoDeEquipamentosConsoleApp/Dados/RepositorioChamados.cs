@@ -4,9 +4,9 @@ namespace GestaoDeEquipamentosConsoleApp.Dados
 {
     public class RepositorioChamado
     {
-        public Chamado[] chamados = new Chamado[100];
+        private Chamado[] chamados = new Chamado[100];
 
-        public int contadorChamados = 0;
+        private int contadorChamados = 0;
         public void CadastrarEquipamento(Chamado chamado)
         {
             chamados[contadorChamados] = chamado;
