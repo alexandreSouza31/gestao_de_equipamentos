@@ -78,13 +78,13 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public bool Cadastrar()
         {
             pagina = "Cadastrar chamado";
-            Chamado chamado = new Chamado();
-
             ExibirCabecalho(pagina);
 
             bool haEquipamentos = repositorioEquipamento.VerificarExistenciaEquipamentos();
             var resultado = direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
+
+            Chamado chamado = new Chamado("", "", new DateTime(1975, 1, 1),null);
 
             var novosdados = ObterNovosDados(chamado, false ,this);
             AtualizarChamado(chamado, novosdados, repositorioChamado);
@@ -235,76 +235,63 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public static Chamado ObterNovosDados(Chamado dadosOriginais, bool editar, TelaChamado telaChamado)
         {
-            Chamado novosDados = new Chamado();
-
-            telaChamado.Visualizar(true, false, false);
-
-            if (editar == true)
+            if (editar)
             {
                 Console.WriteLine();
                 Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
             }
+
+            string titulo;
 
             while (true)
             {
                 string etiquetaTitulo = editar ? $"Título ({dadosOriginais.titulo}): " : "Título: ";
                 Console.Write(etiquetaTitulo);
 
-                string inputTitulo = Console.ReadLine()!;
-                novosDados.titulo = string.IsNullOrWhiteSpace(inputTitulo) ? dadosOriginais.titulo : inputTitulo;
+                titulo = Console.ReadLine();
+                titulo = string.IsNullOrWhiteSpace(titulo) ? dadosOriginais.titulo : titulo;
                 break;
             }
 
-            string etiquetaDescricao = editar ? $"Descricao ({dadosOriginais.descricao}): " : "Descricao: ";
-            Console.Write(etiquetaDescricao);
+            Console.Write(editar ? $"Descrição ({dadosOriginais.descricao}): " : "Descrição: ");
+            string inputDescricao = Console.ReadLine();
+            string descricao = string.IsNullOrWhiteSpace(inputDescricao) ? dadosOriginais.descricao : inputDescricao;
 
-            string inputDescricao = Console.ReadLine()!;
-            novosDados.descricao = string.IsNullOrWhiteSpace(inputDescricao) ? dadosOriginais.descricao : inputDescricao;
+            Console.Write(editar ? $"Data de Abertura ({dadosOriginais.dataAbertura.ToShortDateString()}): " : "Data de Abertura: ");
+            string inputData = Console.ReadLine();
+            DateTime dataAbertura = string.IsNullOrWhiteSpace(inputData) ? dadosOriginais.dataAbertura : DateTime.Parse(inputData);
 
-            DateTime inputData = DateTime.Now;
-            string etiquetaDataAbertura = editar ? $"Data de Abertura ({dadosOriginais.dataAbertura.ToShortDateString()}): " : $"Data de Abertura: {inputData}";
-            Console.Write(etiquetaDataAbertura);
+            bool haEquipamentos = telaChamado.telaEquipamento.Visualizar(true, false, false);
+            var resultado = telaChamado.direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
 
-            novosDados.dataAbertura = inputData;
-            Console.WriteLine();
+            if (resultado != ResultadoDirecionamento.Continuar)
+                return null;
 
-            Equipamento equipamentoSelecionado = null;
+            Console.Write(editar ? $"ID do Equipamento ({dadosOriginais.equipamento?.id}): " : "ID do Equipamento: ");
+            string inputEquipamento = Console.ReadLine();
 
-            while (equipamentoSelecionado == null)
+            Equipamento equipamento;
+
+            if (string.IsNullOrWhiteSpace(inputEquipamento))
             {
-                telaChamado.telaEquipamento.Visualizar(true, false, false);
-                Console.WriteLine();
-                Console.Write("Digite o ID do equipamento que deseja associar: ");
-                string etiquetaEquipamento = editar ? $"Equipamento ({dadosOriginais.equipamento.nome}): " : "";
-                Console.Write(etiquetaEquipamento);
+                equipamento = dadosOriginais.equipamento;
+            }
+            else
+            {
+                int idEquipamento = int.Parse(inputEquipamento);
+                equipamento = telaChamado.repositorioEquipamento.SelecionarEquipamentoPorId(idEquipamento);
 
-                string inputId = Console.ReadLine()!;
-
-                if (string.IsNullOrWhiteSpace(inputId) && editar)
+                if (equipamento == null)
                 {
-                    equipamentoSelecionado = dadosOriginais.equipamento;
-                    break;
+                    Console.WriteLine("Equipamento não encontrado! Pressione Enter para continuar...");
+                    Console.ReadLine();
+                    return null;
                 }
-
-                if (int.TryParse(inputId, out int inputEquipamentoId))
-                {
-                    equipamentoSelecionado = telaChamado.repositorioEquipamento.SelecionarEquipamentoPorId(inputEquipamentoId);
-                    if (equipamentoSelecionado == null)
-                    {
-                        Console.WriteLine("\nEquipamento não encontrado. Tente novamente.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Entrada inválida. Digite um número de ID ou pressione Enter para manter o atual.");
-                }
-                DigitarEnterEContinuar.Executar(true);
             }
 
-            novosDados.equipamento = equipamentoSelecionado;
-
+            Chamado novosDados = new Chamado(titulo, descricao, dataAbertura,equipamento);
             return novosDados;
-       }
+        }
 
         public static void AtualizarChamado(Chamado dadosOriginais, Chamado novosDados, RepositorioChamado repositorioChamado)
         {

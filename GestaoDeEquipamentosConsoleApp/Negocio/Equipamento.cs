@@ -14,5 +14,14 @@
         {
             return $"Id: {id} - Nome: {nome}";
         }
+
+        public Equipamento(string nome, decimal precoAquisicao, string numeroSerie,DateTime dataFabricacao,Fabricante fabricante)
+        {
+            this.nome = nome;
+            this.precoAquisicao = precoAquisicao;
+            this.numeroSerie = numeroSerie;
+            this.dataFabricacao = dataFabricacao;
+            this.fabricante = fabricante;
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
     {
         public RepositorioFabricante repositorioFabricante;
         public Direcionar direcionar=new Direcionar();
-        Fabricante fabricante = new Fabricante();
+        //Fabricante fabricante = new Fabricante(nome, email, telefone);
         public string pagina;
 
         public TelaFabricante()
@@ -133,15 +133,15 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             Console.Clear();
             Console.WriteLine("----- Cadastro de Fabricante -----");
 
-            Fabricante fabricante = new Fabricante();
+            Fabricante dadosIniciais  = new Fabricante("", "", "");
 
-            var novosDados = ObterNovosDados(fabricante, false);
-            AtualizarFabricante(fabricante, novosDados);
+            var novosDados = ObterNovosDados(dadosIniciais, false);
+            AtualizarFabricante(dadosIniciais, novosDados);
 
-            fabricante.id = Fabricante.numeroId++;
-            repositorioFabricante.CadastrarFabricante(fabricante);
+            dadosIniciais.id = Fabricante.numeroId++;
+            repositorioFabricante.CadastrarFabricante(dadosIniciais);
 
-            Console.WriteLine($"\nFabricante '{fabricante.nome}' cadastrado com sucesso! ID: {fabricante.id}");
+            Console.WriteLine($"\nFabricante '{dadosIniciais.nome}' cadastrado com sucesso! ID: {dadosIniciais.id}");
             Console.Write("Digite [Enter] para continuar...");
             Console.ReadLine();
             return true;
@@ -239,7 +239,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public static Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
         {
-            Fabricante novosDados = new Fabricante();
             var tela = new TelaFabricante();
 
             tela.Visualizar(true, false, false);
@@ -251,18 +250,21 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
 
             Console.Write(editar ? $"Nome ({dadosOriginais.nome}): " : "Nome: ");
-            string inputNome = Console.ReadLine();
-            novosDados.nome = string.IsNullOrWhiteSpace(inputNome) ? dadosOriginais.nome : inputNome;
+            string nome = Console.ReadLine();
 
             Console.Write(editar ? $"Email ({dadosOriginais.email}): " : "Email: ");
-            string inputEmail = Console.ReadLine();
-            novosDados.email = string.IsNullOrWhiteSpace(inputEmail) ? dadosOriginais.email : inputEmail;
+            string email = Console.ReadLine();
 
             Console.Write(editar ? $"Telefone ({dadosOriginais.telefone}): " : "Telefone: ");
-            string inputTelefone = Console.ReadLine();
-            novosDados.telefone = string.IsNullOrWhiteSpace(inputTelefone) ? dadosOriginais.telefone : inputTelefone;
+            string telefone = Console.ReadLine();
 
-            return novosDados;
+            nome = string.IsNullOrWhiteSpace(nome) ? dadosOriginais.nome : nome;
+
+            email = string.IsNullOrWhiteSpace(email) ? dadosOriginais.email : email;
+
+            telefone = string.IsNullOrWhiteSpace(telefone) ? dadosOriginais.telefone : telefone;
+
+            return new Fabricante(nome, email, telefone); ;
         }
 
         public static void AtualizarFabricante(Fabricante original, Fabricante novosDados)
