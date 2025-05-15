@@ -233,7 +233,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        public static Chamado ObterNovosDados(Chamado dadosOriginais, bool editar, TelaChamado telaChamado)
+        private static Chamado ObterNovosDados(Chamado dadosOriginais, bool editar, TelaChamado telaChamado)
         {
             if (editar)
             {

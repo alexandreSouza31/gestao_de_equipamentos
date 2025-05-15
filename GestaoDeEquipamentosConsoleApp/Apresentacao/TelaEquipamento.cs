@@ -232,7 +232,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        public Equipamento ObterNovosDados(Equipamento dadosOriginais, bool editar)
+        private Equipamento ObterNovosDados(Equipamento dadosOriginais, bool editar)
         {
             if (editar == true)
             {

@@ -232,7 +232,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        public static Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
+        private static Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
         {
             var tela = new TelaFabricante(null);
 
