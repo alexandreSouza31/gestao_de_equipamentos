@@ -233,7 +233,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        private static Chamado ObterNovosDados(Chamado dadosOriginais, bool editar, TelaChamado telaChamado)
+        private  Chamado ObterNovosDados(Chamado dadosOriginais, bool editar, TelaChamado telaChamado)
         {
             if (editar)
             {
@@ -241,56 +241,66 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
             }
 
-            string titulo;
-
             while (true)
             {
-                string etiquetaTitulo = editar ? $"Título ({dadosOriginais.titulo}): " : "Título: ";
-                Console.Write(etiquetaTitulo);
+                pagina = "Cadastrar chamado";
+                ExibirCabecalho(pagina);
 
-                titulo = Console.ReadLine();
-                titulo = string.IsNullOrWhiteSpace(titulo) ? dadosOriginais.titulo : titulo;
-                break;
-            }
+                Console.Write(editar ? $"Título ({dadosOriginais.titulo}): " : "Título: ");
+                string inputTitulo = Console.ReadLine()!;
+                string titulo = string.IsNullOrWhiteSpace(inputTitulo) ? dadosOriginais.titulo : inputTitulo;
 
-            Console.Write(editar ? $"Descrição ({dadosOriginais.descricao}): " : "Descrição: ");
-            string inputDescricao = Console.ReadLine();
-            string descricao = string.IsNullOrWhiteSpace(inputDescricao) ? dadosOriginais.descricao : inputDescricao;
+                Console.Write(editar ? $"Descrição ({dadosOriginais.descricao}): " : "Descrição: ");
+                string inputDescricao = Console.ReadLine()!;
+                string descricao = string.IsNullOrWhiteSpace(inputDescricao) ? dadosOriginais.descricao : inputDescricao;
 
-            Console.Write(editar ? $"Data de Abertura ({dadosOriginais.dataAbertura.ToShortDateString()}): " : "Data de Abertura: ");
-            string inputData = Console.ReadLine();
-            DateTime dataAbertura = string.IsNullOrWhiteSpace(inputData) ? dadosOriginais.dataAbertura : DateTime.Parse(inputData);
+                Console.Write(editar ? $"Data de Abertura ({dadosOriginais.dataAbertura.ToShortDateString()}): " : "Data de Abertura: ");
+                string inputData = Console.ReadLine()!;
+                DateTime dataAbertura = string.IsNullOrWhiteSpace(inputData) ? dadosOriginais.dataAbertura : DateTime.Parse(inputData);
 
-            bool haEquipamentos = telaChamado.telaEquipamento.Visualizar(true, false, false);
-            var resultado = telaChamado.direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
+                bool haEquipamentos = telaChamado.telaEquipamento.Visualizar(true, false, false);
+                var resultado = telaChamado.direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
 
-            if (resultado != ResultadoDirecionamento.Continuar)
-                return null;
+                if (resultado != ResultadoDirecionamento.Continuar)
+                    return null!;
 
-            Console.Write(editar ? $"ID do Equipamento ({dadosOriginais.equipamento?.id}): " : "ID do Equipamento: ");
-            string inputEquipamento = Console.ReadLine();
+                Console.Write(editar ? $"ID do Equipamento ({dadosOriginais.equipamento?.id}): " : "ID do Equipamento: ");
+                string inputEquipamento = Console.ReadLine()!;
 
-            Equipamento equipamento;
+                Equipamento equipamento;
 
-            if (string.IsNullOrWhiteSpace(inputEquipamento))
-            {
-                equipamento = dadosOriginais.equipamento;
-            }
-            else
-            {
-                int idEquipamento = int.Parse(inputEquipamento);
-                equipamento = telaChamado.repositorioEquipamento.SelecionarEquipamentoPorId(idEquipamento);
-
-                if (equipamento == null)
+                if (string.IsNullOrWhiteSpace(inputEquipamento))
                 {
-                    Console.WriteLine("Equipamento não encontrado! Pressione Enter para continuar...");
-                    Console.ReadLine();
-                    return null;
+                    equipamento = dadosOriginais.equipamento!;
                 }
-            }
+                else
+                {
+                    int idEquipamento = int.Parse(inputEquipamento);
+                    equipamento = telaChamado.repositorioEquipamento.SelecionarEquipamentoPorId(idEquipamento);
 
-            Chamado novosDados = new Chamado(titulo, descricao, dataAbertura,equipamento);
-            return novosDados;
+                    if (equipamento == null)
+                    {
+                        Console.WriteLine("Equipamento não encontrado! Pressione Enter para continuar...");
+                        Console.ReadLine();
+                        return null!;
+                    }
+                }
+
+                string[] nomesCampos = { "titulo", "descricao", "data abertura" };
+                string[] valoresCampos = { titulo, descricao, dataAbertura.ToString() };
+                string erros = ValidarCampo.ValidarCampos(nomesCampos, valoresCampos);
+
+                if (!string.IsNullOrEmpty(erros))
+                {
+                    Console.WriteLine("\nErros encontrados:");
+                    Console.WriteLine(erros);
+                    DigitarEnterEContinuar.Executar();
+                    Console.Clear();
+                    continue;
+                }
+                Chamado novosDados = new Chamado(titulo, descricao, dataAbertura, equipamento);
+                return novosDados;
+            }
         }
 
         public static void AtualizarChamado(Chamado dadosOriginais, Chamado novosDados, RepositorioChamado repositorioChamado)

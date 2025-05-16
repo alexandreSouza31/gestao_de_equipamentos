@@ -1,6 +1,7 @@
 ﻿using GestaoDeEquipamentosConsoleApp.Utils;
 using GestaoDeEquipamentosConsoleApp.Dados;
 using GestaoDeEquipamentosConsoleApp.Negocio;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
@@ -232,34 +233,49 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        private static Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
+        private  Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
         {
+
             var tela = new TelaFabricante(null);
-
-            tela.Visualizar(true, false, false);
-
-            if (editar)
+            while (true)
             {
-                Console.WriteLine();
-                Console.WriteLine("************* Caso não queira alterar um campo, pressione Enter para mantê-lo.");
+                tela.Visualizar(false, false, false);
+                pagina = "Cadastrar Fabricante";
+                ExibirCabecalho(pagina);
+
+                if (editar)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("************* Caso não queira alterar um campo, pressione Enter para mantê-lo.");
+                }
+
+                Console.Write(editar ? $"Nome ({dadosOriginais.nome}): " : "Nome: ");
+                string nome = Console.ReadLine();
+
+                Console.Write(editar ? $"Email ({dadosOriginais.email}): " : "Email: ");
+                string email = Console.ReadLine();
+
+                Console.Write(editar ? $"Telefone ({dadosOriginais.telefone}): " : "Telefone: ");
+                string telefone = Console.ReadLine();
+
+                nome = string.IsNullOrWhiteSpace(nome) ? dadosOriginais.nome : nome;
+                email = string.IsNullOrWhiteSpace(email) ? dadosOriginais.email : email;
+                telefone = string.IsNullOrWhiteSpace(telefone) ? dadosOriginais.telefone : telefone;
+
+                string[] nomesCampos = { "nome", "email", "telefone" };
+                string[] valoresCampos = { nome, email, telefone };
+                string erros = ValidarCampo.ValidarCampos(nomesCampos, valoresCampos);
+
+                if (!string.IsNullOrEmpty(erros))
+                {
+                    Console.WriteLine("\nErros encontrados:");
+                    Console.WriteLine(erros);
+                    DigitarEnterEContinuar.Executar();
+                    Console.Clear();
+                    continue;
+                }
+                return new Fabricante(nome, email, telefone);
             }
-
-            Console.Write(editar ? $"Nome ({dadosOriginais.nome}): " : "Nome: ");
-            string nome = Console.ReadLine();
-
-            Console.Write(editar ? $"Email ({dadosOriginais.email}): " : "Email: ");
-            string email = Console.ReadLine();
-
-            Console.Write(editar ? $"Telefone ({dadosOriginais.telefone}): " : "Telefone: ");
-            string telefone = Console.ReadLine();
-
-            nome = string.IsNullOrWhiteSpace(nome) ? dadosOriginais.nome : nome;
-
-            email = string.IsNullOrWhiteSpace(email) ? dadosOriginais.email : email;
-
-            telefone = string.IsNullOrWhiteSpace(telefone) ? dadosOriginais.telefone : telefone;
-
-            return new Fabricante(nome, email, telefone); ;
         }
 
         public static void AtualizarFabricante(Fabricante original, Fabricante novosDados)
