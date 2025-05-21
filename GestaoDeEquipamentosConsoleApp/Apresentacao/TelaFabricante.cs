@@ -2,6 +2,7 @@
 using GestaoDeEquipamentosConsoleApp.Dados;
 using GestaoDeEquipamentosConsoleApp.Negocio;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using GestaoDeEquipamentosConsoleApp.Compartilhado;
 
 namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
@@ -71,11 +72,12 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
-            pagina = "Visualizar chamado";
+            pagina = "Visualizar Fabricante";
             ExibirCabecalho(pagina);
 
             Console.Clear();
             if (exibirCabecalho)
+                ExibirCabecalho(pagina);
                 Console.WriteLine("----- Fabricantes Registrados -----");
 
             bool haEquipamentos = repositorioFabricante.VerificarExistenciaRegistros();
@@ -160,7 +162,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 return false;
             }
 
-            Visualizar(false, false, false);
+            Visualizar(true, false, false);
 
             while (true)
             {
@@ -168,6 +170,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 if (!int.TryParse(Console.ReadLine(), out int idFabricante))
                 {
                     Console.WriteLine("ID inválido. Tente novamente.");
+                    DigitarEnterEContinuar.Executar();
                     continue;
                 }
 
@@ -200,7 +203,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 return false;
             }
 
-            Visualizar(false, false, false);
 
             while (true)
             {
@@ -230,9 +232,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        private  Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
+        private Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
         {
-
             var tela = new TelaFabricante(null);
             while (true)
             {
@@ -246,18 +247,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     Console.WriteLine("************* Caso não queira alterar um campo, pressione Enter para mantê-lo.");
                 }
 
-                Console.Write(editar ? $"Nome ({dadosOriginais.nome}): " : "Nome: ");
-                string nome = Console.ReadLine();
-
-                Console.Write(editar ? $"Email ({dadosOriginais.email}): " : "Email: ");
-                string email = Console.ReadLine();
-
-                Console.Write(editar ? $"Telefone ({dadosOriginais.telefone}): " : "Telefone: ");
-                string telefone = Console.ReadLine();
-
-                nome = string.IsNullOrWhiteSpace(nome) ? dadosOriginais.nome : nome;
-                email = string.IsNullOrWhiteSpace(email) ? dadosOriginais.email : email;
-                telefone = string.IsNullOrWhiteSpace(telefone) ? dadosOriginais.telefone : telefone;
+                string nome = RepositorioBase<Fabricante>.ObterEntrada("Nome", dadosOriginais.nome, editar);
+                string email = RepositorioBase<Fabricante>.ObterEntrada("Email", dadosOriginais.email, editar);
+                string telefone = RepositorioBase<Fabricante>.ObterEntrada("Telefone", dadosOriginais.telefone, editar);
 
                 string[] nomesCampos = { "nome", "email", "telefone" };
                 string[] valoresCampos = { nome, email, telefone };
