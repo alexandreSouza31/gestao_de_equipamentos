@@ -78,20 +78,20 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             if (exibirCabecalho)
                 Console.WriteLine("----- Fabricantes Registrados -----");
 
-            bool haEquipamentos = repositorioFabricante.VerificarExistenciaFabricantes();
+            bool haEquipamentos = repositorioFabricante.VerificarExistenciaRegistros();
 
-            bool haChamados = repositorioFabricante.SelecionarFabricantes().Length > 0;
+            bool haChamados = repositorioFabricante.SelecionarRegistros().Length > 0;
             var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
-            Fabricante[] fabricantes = repositorioFabricante.SelecionarFabricantes();
+            object[] fabricantes = repositorioFabricante.SelecionarRegistros();
             int encontrados = 0;
 
             string tamanhoCabecalhoColunas = "{0, -5} | {1, -20} | {2, -25} | {3, -15}";
 
             for (int i = 0; i < fabricantes.Length; i++)
             {
-                Fabricante f = fabricantes[i];
+                Fabricante f = (Fabricante)fabricantes[i];
                 if (f == null) continue;
 
                 if (encontrados == 0)
@@ -129,15 +129,20 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             Console.Clear();
             Console.WriteLine("----- Cadastro de Fabricante -----");
 
-            Fabricante dadosIniciais  = new Fabricante("", "", "");
+            Fabricante dadosIniciais = new Fabricante("", "", "");
 
             var novosDados = ObterNovosDados(dadosIniciais, false);
-            AtualizarFabricante(dadosIniciais, novosDados);
 
-            dadosIniciais.id = Fabricante.numeroId++;
-            repositorioFabricante.CadastrarFabricante(dadosIniciais);
+            if (novosDados == null)
+            {
+                Console.WriteLine("Cadastro cancelado.");
+                return false;
+            }
 
-            Console.WriteLine($"\nFabricante '{dadosIniciais.nome}' cadastrado com sucesso! ID: {dadosIniciais.id}");
+            novosDados.id = Fabricante.numeroId++;
+            repositorioFabricante.CadastrarRegistro(novosDados);
+
+            Console.WriteLine($"\nFabricante '{novosDados.nome}' cadastrado com sucesso! ID: {novosDados.id}");
             Console.Write("Digite [Enter] para continuar...");
             Console.ReadLine();
             return true;
@@ -149,8 +154,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
 
-            var todos = repositorioFabricante.SelecionarFabricantes();
-            bool haFabricantes = repositorioFabricante.SelecionarFabricantes().Length > 0;
+            var todos = repositorioFabricante.SelecionarRegistros();
+            bool haFabricantes = repositorioFabricante.SelecionarRegistros().Length > 0;
             var resultado = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
@@ -165,7 +170,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     continue;
                 }
 
-                Fabricante fabricanteExistente = repositorioFabricante.SelecionarFabricantePorId(idFabricante);
+                Fabricante fabricanteExistente = repositorioFabricante.SelecionarRegistroPorId(idFabricante);
 
                 if (fabricanteExistente == null)
                 {
@@ -190,14 +195,14 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Excluir chamado";
             ExibirCabecalho(pagina);
 
-            bool haFabricantes = repositorioFabricante.VerificarExistenciaFabricantes();
+            bool haFabricantes = repositorioFabricante.VerificarExistenciaRegistros();
             var resultado = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             bool visualizarCadastrados = Visualizar(false, false,false);
             if (!visualizarCadastrados) return false;
 
-            Fabricante[] fabricantes = repositorioFabricante.SelecionarFabricantes();
+            Fabricante[] fabricantes = repositorioFabricante.SelecionarRegistros();
 
             while (true)
             {
@@ -205,7 +210,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 Console.Write("Digite o Id do Fabricante para excluir: ");
 
                 bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
-                var fabricante = repositorioFabricante.SelecionarFabricantePorId(idEscolhido);
+                var fabricante = repositorioFabricante.SelecionarRegistroPorId(idEscolhido);
 
                 if (!idValido && fabricante == null)
                 {

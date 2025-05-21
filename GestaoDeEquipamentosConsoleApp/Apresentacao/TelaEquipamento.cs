@@ -76,7 +76,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Cadastrar";
             ExibirCabecalho(pagina);
 
-            bool haFabricante = repositorioFabricante.VerificarExistenciaFabricantes();
+            bool haFabricante = repositorioFabricante.VerificarExistenciaRegistros();
             var resultado = direcionar.DirecionarParaMenu(haFabricante, true, "Fabricante");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
@@ -278,7 +278,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 else
                 {
                     int idFabricante = int.Parse(inputFabricante);
-                    fabricante = repositorioFabricante.SelecionarFabricantePorId(idFabricante);
+                    fabricante = repositorioFabricante.SelecionarRegistroPorId(idFabricante);
 
                     if (fabricante == null)
                     {
