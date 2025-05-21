@@ -14,6 +14,32 @@
             }
         }
 
+        public bool ExcluirRegistro(int id)
+        {
+            for (int i = 0; i < registros.Length; i++)
+            {
+                if (registros[i] != null && registros[i].id == id)
+                {
+                    registros[i] = default;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool EditarRegistro(int id, T novosDados)
+        {
+            for (int i = 0; i < registros.Length; i++)
+            {
+                if (registros[i] != null && registros[i].id == id)
+                {
+                    registros[i] = novosDados;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public T[] SelecionarRegistros()
         {
             return registros;
@@ -37,6 +63,12 @@
                     return true;
             }
             return false;
+        }
+
+        public bool TentarObterRegistro(int id, out T registro)
+        {
+            registro = SelecionarRegistroPorId(id);
+            return registro != null && !registro.Equals(default(T));
         }
     }
 }

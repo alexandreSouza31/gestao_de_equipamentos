@@ -150,41 +150,39 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Editar()
         {
-            pagina = "Editar chamado";
+            pagina = "Editar Fabricante";
             ExibirCabecalho(pagina);
 
+            if (!repositorioFabricante.VerificarExistenciaRegistros())
+            {
+                Console.WriteLine("Nenhum fabricante cadastrado.");
+                DigitarEnterEContinuar.Executar();
+                return false;
+            }
 
-            var todos = repositorioFabricante.SelecionarRegistros();
-            bool haFabricantes = repositorioFabricante.SelecionarRegistros().Length > 0;
-            var resultado = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
-            if (resultado != ResultadoDirecionamento.Continuar) return false;
+            Visualizar(false, false, false);
 
-            bool visualizarCadastrados = Visualizar(false, false, false);
             while (true)
             {
-                Console.WriteLine();
-                Console.Write("Digite o Id do fabricante para editar: ");
+                Console.Write("\nDigite o Id do fabricante para editar: ");
                 if (!int.TryParse(Console.ReadLine(), out int idFabricante))
                 {
                     Console.WriteLine("ID inválido. Tente novamente.");
                     continue;
                 }
 
-                Fabricante fabricanteExistente = repositorioFabricante.SelecionarRegistroPorId(idFabricante);
-
-                if (fabricanteExistente == null)
+                if (!repositorioFabricante.TentarObterRegistro(idFabricante, out var fabricanteExistente))
                 {
                     Console.WriteLine("Fabricante não encontrado. Tente novamente.");
                     continue;
                 }
 
-                Fabricante novosDados = ObterNovosDados(fabricanteExistente, true);
+                var novosDados = ObterNovosDados(fabricanteExistente, true);
                 novosDados.id = fabricanteExistente.id;
-                AtualizarFabricante(fabricanteExistente, novosDados);
 
-                Visualizar(true, false,false);
-                Console.WriteLine();
-                Console.WriteLine($"{fabricanteExistente.nome} editado com sucesso! id: {fabricanteExistente.id}");
+                repositorioFabricante.EditarRegistro(idFabricante, novosDados);
+
+                Console.WriteLine($"\nFabricante '{novosDados.nome}' editado com sucesso! id: {novosDados.id}");
                 DigitarEnterEContinuar.Executar();
                 return true;
             }
@@ -195,46 +193,40 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Excluir chamado";
             ExibirCabecalho(pagina);
 
-            bool haFabricantes = repositorioFabricante.VerificarExistenciaRegistros();
-            var resultado = direcionar.DirecionarParaMenu(haFabricantes, false, "Fabricante");
-            if (resultado != ResultadoDirecionamento.Continuar) return false;
+            if (!repositorioFabricante.VerificarExistenciaRegistros())
+            {
+                Console.WriteLine("Nenhum fabricante cadastrado.");
+                DigitarEnterEContinuar.Executar();
+                return false;
+            }
 
-            bool visualizarCadastrados = Visualizar(false, false,false);
-            if (!visualizarCadastrados) return false;
-
-            Fabricante[] fabricantes = repositorioFabricante.SelecionarRegistros();
+            Visualizar(false, false, false);
 
             while (true)
             {
-                Console.WriteLine();
-                Console.Write("Digite o Id do Fabricante para excluir: ");
-
-                bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
-                var fabricante = repositorioFabricante.SelecionarRegistroPorId(idEscolhido);
-
-                if (!idValido && fabricante == null)
+                Console.Write("\nDigite o Id do fabricante para excluir: ");
+                if (!int.TryParse(Console.ReadLine(), out int idFabricante))
                 {
                     Console.WriteLine("ID inválido. Tente novamente.");
                     continue;
                 }
 
-                for (int i = 0; i < fabricantes.Length; i++)
+                if (!repositorioFabricante.TentarObterRegistro(idFabricante, out var fabricante))
                 {
-                    if (fabricantes[i] == null) continue;
-
-                    if (idEscolhido == fabricantes[i].id)
-                    {
-                        DesejaExcluir desejaExcluir = new DesejaExcluir();
-                        var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(fabricante.nome);
-                        if (vaiExcluir != "S") return false;
-
-                        Console.WriteLine();
-                        Console.WriteLine($"Fabricante {fabricante.nome} excluído com sucesso! id: {idEscolhido}");
-                        fabricantes[i] = null;
-                        DigitarEnterEContinuar.Executar();
-                        return true;
-                    }
+                    Console.WriteLine("Fabricante não encontrado. Tente novamente.");
+                    continue;
                 }
+
+                DesejaExcluir desejaExcluir = new DesejaExcluir();
+                var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(fabricante.nome);
+
+                if (vaiExcluir != "S") return false;
+
+                repositorioFabricante.ExcluirRegistro(idFabricante);
+
+                Console.WriteLine($"\nFabricante '{fabricante.nome}' excluído com sucesso! id: {fabricante.id}");
+                DigitarEnterEContinuar.Executar();
+                return true;
             }
         }
 
