@@ -71,11 +71,23 @@
             return registro != null && !registro.Equals(default(T));
         }
 
-        public static string ObterEntrada(string campo, string valorAtual, bool editar)
+        public static T ObterEntrada<T>(string campo, T valorAtual, bool editar)
         {
             Console.Write(editar ? $"{campo} ({valorAtual}): " : $"{campo}: ");
             string entrada = Console.ReadLine();
-            return string.IsNullOrWhiteSpace(entrada) ? valorAtual : entrada;
+
+            if (string.IsNullOrWhiteSpace(entrada))
+                return valorAtual;
+
+            try
+            {
+                return (T)Convert.ChangeType(entrada, typeof(T));
+            }
+            catch
+            {
+                Console.WriteLine("Entrada inválida. Manterá o valor atual.");
+                return valorAtual;
+            }
         }
     }
 }
