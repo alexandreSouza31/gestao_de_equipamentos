@@ -1,4 +1,5 @@
-﻿using GestaoDeEquipamentosConsoleApp.Dados;
+﻿using GestaoDeEquipamentosConsoleApp.Compartilhado;
+using GestaoDeEquipamentosConsoleApp.Dados;
 using GestaoDeEquipamentosConsoleApp.Negocio;
 using GestaoDeEquipamentosConsoleApp.Utils;
 
@@ -87,7 +88,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             AtualizarEquipamento(equipamento, novosDados);
 
             equipamento.id = Equipamento.numeroId++;
-            repositorioEquipamento.CadastrarEquipamento(equipamento);
+            repositorioEquipamento.CadastrarRegistro(equipamento);
 
             Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
             DigitarEnterEContinuar.Executar();
@@ -99,7 +100,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Visualizar";
             if (exibirCabecalho) ExibirCabecalho(pagina);
 
-            Equipamento[] equipamentos = repositorioEquipamento.SelecionarEquipamentos();
+            Equipamento[] equipamentos = repositorioEquipamento.SelecionarRegistros();
             int encontrados = 0;
 
             string tamanhoCabecalhoColunas = "{0, -5} | {1, -30} | {2, -15} | {3, -15} | {4, -15} | {5, -10}";
@@ -138,11 +139,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             ExibirCabecalho(pagina);
 
             bool visualizarCadastrados = Visualizar(false, false, false);
-            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaEquipamentos();
+            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
             var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
-            Equipamento[] equipamentos = repositorioEquipamento.SelecionarEquipamentos();
+            Equipamento[] equipamentos = repositorioEquipamento.SelecionarRegistros();
 
             while (true)
             {
@@ -188,15 +189,15 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Excluir";
             ExibirCabecalho(pagina);
 
-            var todos = repositorioEquipamento.SelecionarEquipamentos();
-            bool haEquipamentos = repositorioEquipamento.SelecionarEquipamentos().Length > 0;
+            var todos = repositorioEquipamento.SelecionarRegistros();
+            bool haEquipamentos = repositorioEquipamento.SelecionarRegistros().Length > 0;
             var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             bool visualizarCadastrados = Visualizar(false, false, false);
             if (!visualizarCadastrados) return false;
 
-            Equipamento[] equipamentos = repositorioEquipamento.SelecionarEquipamentos();
+            Equipamento[] equipamentos = repositorioEquipamento.SelecionarRegistros();
 
             while (true)
             {
@@ -204,7 +205,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 Console.Write("Digite o Id do equipamento para excluir: ");
 
                 bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
-                var equipamento = repositorioEquipamento.SelecionarEquipamentoPorId(idEscolhido);
+                var equipamento = repositorioEquipamento.SelecionarRegistroPorId(idEscolhido);
 
                 if (!idValido && equipamento == null)
                 {
@@ -239,57 +240,39 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 pagina = "Cadastrar";
                 ExibirCabecalho(pagina);
 
-                if (editar == true)
+                if (editar)
                 {
                     Console.WriteLine();
                     Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
                 }
 
-                Console.Write(editar ? $"Nome ({dadosOriginais.nome}): " : "Nome: ");
-                string inputNome = Console.ReadLine()!;
-                string nome = string.IsNullOrWhiteSpace(inputNome) ? dadosOriginais.nome : inputNome;
-
-                Console.Write(editar ? $"Preço de Aquisição ({dadosOriginais.precoAquisicao}): " : "Preço de Aquisição: ");
-                string inputPreco = Console.ReadLine()!;
-                decimal precoAquisicao = string.IsNullOrWhiteSpace(inputPreco) ? dadosOriginais.precoAquisicao : Convert.ToDecimal(inputPreco);
-
-                Console.Write(editar ? $"Número de Série ({dadosOriginais.numeroSerie}): " : "Número de Série: ");
-                string inputNumeroSerie = Console.ReadLine()!;
-                string numeroSerie = string.IsNullOrWhiteSpace(inputNumeroSerie) ? dadosOriginais.numeroSerie : inputNumeroSerie;
-
-                Console.Write(editar ? $"Data de Fabricação ({dadosOriginais.dataFabricacao.ToShortDateString()}): " : "Data de Fabricação: ");
-                string inputData = Console.ReadLine()!;
-                DateTime dataFabricacao = string.IsNullOrWhiteSpace(inputData) ? dadosOriginais.dataFabricacao : DateTime.Parse(inputData);
+                string nome = RepositorioBase<Equipamento>.ObterEntrada("Nome", dadosOriginais.nome, editar);
+                decimal precoAquisicao = RepositorioBase<Equipamento>.ObterEntrada("preço Aquisição", dadosOriginais.precoAquisicao, editar);
+                string numeroSerie = RepositorioBase<Equipamento>.ObterEntrada("número Série", dadosOriginais.numeroSerie, editar);
+                DateTime dataFabricacao = RepositorioBase<Equipamento>.ObterEntrada("data Fabricação", dadosOriginais.dataFabricacao, editar);
 
                 bool haFabricantes = telaFabricante.Visualizar(true, false, false);
                 var resultado = direcionar.DirecionarParaMenu(haFabricantes, true, "Fabricante");
                 if (resultado != ResultadoDirecionamento.Continuar)
-                return null;
+                    return null;
 
                 Console.Write(editar ? $"ID do Fabricante ({dadosOriginais.fabricante?.id}): " : "ID do Fabricante: ");
                 string inputFabricante = Console.ReadLine()!;
 
-                Fabricante fabricante;
+                Fabricante fabricante = string.IsNullOrWhiteSpace(inputFabricante)
+                    ? dadosOriginais.fabricante!
+                    : repositorioFabricante.SelecionarRegistroPorId(int.Parse(inputFabricante));
 
-                if (string.IsNullOrWhiteSpace(inputFabricante))
+                if (fabricante == null)
                 {
-                    fabricante = dadosOriginais.fabricante!;
-                }
-                else
-                {
-                    int idFabricante = int.Parse(inputFabricante);
-                    fabricante = repositorioFabricante.SelecionarRegistroPorId(idFabricante);
-
-                    if (fabricante == null)
-                    {
-                        Console.WriteLine("Fabricante não encontrado! Pressione Enter para continuar...");
-                        Console.ReadLine();
-                        return null;
-                    }
+                    Console.WriteLine("Fabricante não encontrado! Pressione Enter para continuar...");
+                    Console.ReadLine();
+                    return null;
                 }
 
                 string[] nomesCampos = { "nome", "preço aquisição", "numero série", "data abertura", "fabricante" };
-                string[] valoresCampos = { nome, precoAquisicao.ToString(), numeroSerie, dataFabricacao.ToString(), fabricante!.ToString()! };
+                string[] valoresCampos = { nome, precoAquisicao.ToString(), numeroSerie, dataFabricacao.ToString(), fabricante.ToString()! };
+
                 string erros = ValidarCampo.ValidarCampos(nomesCampos, valoresCampos);
 
                 if (!string.IsNullOrEmpty(erros))
@@ -301,12 +284,12 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     continue;
                 }
 
-                Equipamento novosDados = new Equipamento(nome, precoAquisicao, numeroSerie, dataFabricacao, fabricante);
-                return novosDados;
+                return new Equipamento(nome, precoAquisicao, numeroSerie, dataFabricacao, fabricante);
             }
         }
 
-        public  void AtualizarEquipamento(Equipamento dadosOriginais, Equipamento novosDados)
+
+        public void AtualizarEquipamento(Equipamento dadosOriginais, Equipamento novosDados)
         {
             dadosOriginais.nome = novosDados.nome;
             dadosOriginais.precoAquisicao = novosDados.precoAquisicao;

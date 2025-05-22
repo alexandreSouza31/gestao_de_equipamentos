@@ -80,7 +80,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Cadastrar chamado";
             ExibirCabecalho(pagina);
 
-            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaEquipamentos();
+            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
             var resultado = direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
@@ -101,7 +101,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Visualizar chamado";
             if (exibirCabecalho) ExibirCabecalho(pagina);
 
-            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaEquipamentos();
+            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
 
             if (msgAoCadastrar==true)
             {
@@ -276,7 +276,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 else
                 {
                     int idEquipamento = int.Parse(inputEquipamento);
-                    equipamento = telaChamado.repositorioEquipamento.SelecionarEquipamentoPorId(idEquipamento);
+                    equipamento = telaChamado.repositorioEquipamento.SelecionarRegistroPorId(idEquipamento);
 
                     if (equipamento == null)
                     {

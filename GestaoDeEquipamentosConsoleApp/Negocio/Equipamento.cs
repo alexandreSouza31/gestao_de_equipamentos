@@ -1,14 +1,16 @@
-﻿namespace GestaoDeEquipamentosConsoleApp.Negocio
+﻿using GestaoDeEquipamentosConsoleApp.Compartilhado;
+
+namespace GestaoDeEquipamentosConsoleApp.Negocio
 {
-    public class Equipamento
+    public class Equipamento : IEntidade
     {
         public static int numeroId = 1;
-        public int id;
-        public string nome;
-        public decimal precoAquisicao;
-        public string numeroSerie;
-        public DateTime dataFabricacao;
-        public Fabricante fabricante;
+        public int id { get; set; }
+        public string nome { get; set; }
+        public decimal precoAquisicao { get; set; }
+        public string numeroSerie { get; set; }
+        public DateTime dataFabricacao { get; set; }
+        public Fabricante fabricante { get; set; }
 
         public override string ToString()
         {
