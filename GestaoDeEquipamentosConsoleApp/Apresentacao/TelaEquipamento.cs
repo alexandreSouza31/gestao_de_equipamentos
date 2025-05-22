@@ -189,13 +189,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Excluir";
             ExibirCabecalho(pagina);
 
-            var todos = repositorioEquipamento.SelecionarRegistros();
-            bool haEquipamentos = repositorioEquipamento.SelecionarRegistros().Length > 0;
+            bool visualizarCadastrados = Visualizar(false, false, false);
+            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
+
             var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
-
-            bool visualizarCadastrados = Visualizar(false, false, false);
-            if (!visualizarCadastrados) return false;
 
             Equipamento[] equipamentos = repositorioEquipamento.SelecionarRegistros();
 
@@ -204,28 +202,31 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 Console.WriteLine();
                 Console.Write("Digite o Id do equipamento para excluir: ");
 
-                bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
-                var equipamento = repositorioEquipamento.SelecionarRegistroPorId(idEscolhido);
-
-                if (!idValido && equipamento == null)
+                if (!int.TryParse(Console.ReadLine(), out int idEscolhido))
                 {
                     Console.WriteLine("ID inválido. Tente novamente.");
                     continue;
                 }
 
+                var equipamento = repositorioEquipamento.SelecionarRegistroPorId(idEscolhido);
+
+                if (equipamento == null)
+                {
+                    Console.WriteLine("Equipamento não encontrado. Tente novamente.");
+                    continue;
+                }
+
+                DesejaExcluir desejaExcluir = new DesejaExcluir();
+                var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(equipamento.nome);
+                if (vaiExcluir != "S") return false;
+
                 for (int i = 0; i < equipamentos.Length; i++)
                 {
-                    if (equipamentos[i] == null) continue;
-
-                    if (idEscolhido == equipamentos[i].id)
+                    if (equipamentos[i] != null && equipamentos[i].id == idEscolhido)
                     {
-                        DesejaExcluir desejaExcluir = new DesejaExcluir();
-                        var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(equipamento.nome);
-                        if (vaiExcluir != "S") return false;
-
+                        equipamentos[i] = null;
                         Console.WriteLine();
                         Console.WriteLine($"Equipamento {equipamento.nome} excluído com sucesso! id: {idEscolhido}");
-                        equipamentos[i] = null;
                         DigitarEnterEContinuar.Executar();
                         return true;
                     }
@@ -267,7 +268,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 {
                     Console.WriteLine("Fabricante não encontrado! Pressione Enter para continuar...");
                     Console.ReadLine();
-                    return null;
+                    continue;
                 }
 
                 string[] nomesCampos = { "nome", "preço aquisição", "numero série", "data abertura", "fabricante" };
