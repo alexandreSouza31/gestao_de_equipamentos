@@ -1,3 +1,4 @@
+using GestaoDeEquipamentosConsoleApp.Compartilhado;
 using GestaoDeEquipamentosConsoleApp.Dados;
 using GestaoDeEquipamentosConsoleApp.Negocio;
 using GestaoDeEquipamentosConsoleApp.Utils;
@@ -90,7 +91,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             AtualizarChamado(chamado, novosdados, repositorioChamado);
 
             chamado.id = Chamado.numeroId++;
-            repositorioChamado.CadastrarEquipamento(chamado);
+            repositorioChamado.CadastrarRegistro(chamado);
             Console.WriteLine($"chamado {chamado.titulo} cadastrado com sucesso! id: {chamado.id}");
             DigitarEnterEContinuar.Executar();
             return true;
@@ -105,13 +106,13 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             if (msgAoCadastrar==true)
             {
-                bool haChamados = repositorioChamado.SelecionarChamados().Length > 0;
+                bool haChamados = repositorioChamado.SelecionarRegistros().Length > 0;
                 var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
                 if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             }
 
-            Chamado[] chamados = repositorioChamado.SelecionarChamados();
+            Chamado[] chamados = repositorioChamado.SelecionarRegistros();
             int encontrados = 0;
 
             string tamanhoCabecalhoColunas = "{0, -5} | {1, -20} | {2, -40} | {3, -15} | {4, -15}";
@@ -152,7 +153,10 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Editar chamado";
             ExibirCabecalho(pagina);
 
-            bool visualizarCadastrados = Visualizar(false, false, false);
+            bool haChamados = repositorioChamado.VerificarExistenciaRegistros();
+            var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
+            if (resultado != ResultadoDirecionamento.Continuar) return false;
+            bool visualizarCadastrados = Visualizar(true, false, false);
             if (!visualizarCadastrados) return false;
 
             while (true)
@@ -165,7 +169,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     continue;
                 }
 
-                Chamado chamadoExistente = repositorioChamado.SelecionarChamadoPorId(idChamado);
+                Chamado chamadoExistente = repositorioChamado.SelecionarRegistroPorId(idChamado);
 
                 if (chamadoExistente == null)
                 {
@@ -190,14 +194,14 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             pagina = "Excluir chamado";
             ExibirCabecalho(pagina);
 
-            bool haChamados = repositorioChamado.VerificarExistenciaChamados();
+            bool haChamados = repositorioChamado.VerificarExistenciaRegistros();
             var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
             if (resultado != ResultadoDirecionamento.Continuar) return false;
 
             bool visualizarCadastrados = Visualizar(false, false,false);
             if (!visualizarCadastrados) return false;
 
-            Chamado[] chamados = repositorioChamado.SelecionarChamados();
+            Chamado[] chamados = repositorioChamado.SelecionarRegistros();
 
             while (true)
             {
@@ -205,7 +209,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 Console.Write("Digite o Id do chamado para excluir: ");
 
                 bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
-                var chamado = repositorioChamado.SelecionarChamadoPorId(idEscolhido);
+                var chamado = repositorioChamado.SelecionarRegistroPorId(idEscolhido);
 
                 if (!idValido && chamado == null)
                 {
@@ -233,30 +237,23 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        private  Chamado ObterNovosDados(Chamado dadosOriginais, bool editar, TelaChamado telaChamado)
+        private Chamado ObterNovosDados(Chamado dadosOriginais, bool editar, TelaChamado telaChamado)
         {
+            pagina = "Cadastrar chamado";
             if (editar)
             {
+                pagina = "Editar chamado";
                 Console.WriteLine();
                 Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
             }
 
             while (true)
             {
-                pagina = "Cadastrar chamado";
                 ExibirCabecalho(pagina);
 
-                Console.Write(editar ? $"Título ({dadosOriginais.titulo}): " : "Título: ");
-                string inputTitulo = Console.ReadLine()!;
-                string titulo = string.IsNullOrWhiteSpace(inputTitulo) ? dadosOriginais.titulo : inputTitulo;
-
-                Console.Write(editar ? $"Descrição ({dadosOriginais.descricao}): " : "Descrição: ");
-                string inputDescricao = Console.ReadLine()!;
-                string descricao = string.IsNullOrWhiteSpace(inputDescricao) ? dadosOriginais.descricao : inputDescricao;
-
-                Console.Write(editar ? $"Data de Abertura ({dadosOriginais.dataAbertura.ToShortDateString()}): " : "Data de Abertura: ");
-                string inputData = Console.ReadLine()!;
-                DateTime dataAbertura = string.IsNullOrWhiteSpace(inputData) ? dadosOriginais.dataAbertura : DateTime.Parse(inputData);
+                string titulo = RepositorioBase<Chamado>.ObterEntrada("Título", dadosOriginais.titulo, editar);
+                string descricao = RepositorioBase<Chamado>.ObterEntrada("Descrição", dadosOriginais.descricao, editar);
+                DateTime dataAbertura = RepositorioBase<Chamado>.ObterEntrada("Data de Abertura", dadosOriginais.dataAbertura, editar);
 
                 bool haEquipamentos = telaChamado.telaEquipamento.Visualizar(true, false, false);
                 var resultado = telaChamado.direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
@@ -275,19 +272,25 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 }
                 else
                 {
-                    int idEquipamento = int.Parse(inputEquipamento);
+                    if (!int.TryParse(inputEquipamento, out int idEquipamento))
+                    {
+                        Console.WriteLine("ID inválido! Pressione Enter para continuar...");
+                        Console.ReadLine();
+                        continue;
+                    }
+
                     equipamento = telaChamado.repositorioEquipamento.SelecionarRegistroPorId(idEquipamento);
 
                     if (equipamento == null)
                     {
                         Console.WriteLine("Equipamento não encontrado! Pressione Enter para continuar...");
                         Console.ReadLine();
-                        return null!;
+                        continue;
                     }
                 }
 
-                string[] nomesCampos = { "titulo", "descricao", "data abertura" };
-                string[] valoresCampos = { titulo, descricao, dataAbertura.ToString() };
+                string[] nomesCampos = { "titulo", "descricao", "data abertura", "equipamento" };
+                string[] valoresCampos = { titulo, descricao, dataAbertura.ToString(), equipamento.ToString()! };
                 string erros = ValidarCampo.ValidarCampos(nomesCampos, valoresCampos);
 
                 if (!string.IsNullOrEmpty(erros))
@@ -310,11 +313,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             dadosOriginais.dataAbertura = novosDados.dataAbertura;
             dadosOriginais.equipamento = novosDados.equipamento;
 
-            for (int i = 0; i < repositorioChamado.SelecionarChamados().Length; i++)
+            for (int i = 0; i < repositorioChamado.SelecionarRegistros().Length; i++)
             {
-                if (repositorioChamado.SelecionarChamados()[i]?.id == dadosOriginais.id)
+                if (repositorioChamado.SelecionarRegistros()[i]?.id == dadosOriginais.id)
                 {
-                    repositorioChamado.SelecionarChamados()[i] = dadosOriginais;
+                    repositorioChamado.SelecionarRegistros()[i] = dadosOriginais;
                     break;
                 }
             }

@@ -1,13 +1,15 @@
+using GestaoDeEquipamentosConsoleApp.Compartilhado;
+
 namespace GestaoDeEquipamentosConsoleApp.Negocio
 {
-    public class Chamado
+    public class Chamado : IEntidade
     {
         public static int numeroId = 1;
-        public int id;
-        public string titulo;
-        public string descricao;
-        public DateTime dataAbertura;
-        public Equipamento equipamento;
+        public int id { get; set; }
+        public string titulo { get; set; }
+        public string descricao { get; set; }
+        public DateTime dataAbertura { get; set; }
+        public Equipamento equipamento { get; set; }
 
         public Chamado(string titulo, string descricao, DateTime dataAbertura,Equipamento equipamento)
         {
