@@ -1,6 +1,6 @@
 ﻿namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
-    public class TelaMenu
+    public class TelaMenuPrincipal
     {
         public char ExibirMenuPrincipal()
         {

@@ -5,7 +5,7 @@ using GestaoDeEquipamentosConsoleApp.Utils;
 
 namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
-    public class TelaEquipamento
+    public class TelaEquipamento : TelaBase
     {
         public string pagina;
         private RepositorioEquipamento repositorioEquipamento;
@@ -13,26 +13,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public TelaFabricante telaFabricante;
         Direcionar direcionar = new Direcionar();
 
-        public TelaEquipamento(RepositorioEquipamento repositorioEquipamento, RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante)
+        public TelaEquipamento(RepositorioEquipamento repositorioEquipamento, RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante) : base("Equipamento")
         {
             this.repositorioEquipamento = repositorioEquipamento;
             this.repositorioFabricante = repositorioFabricante;
             this.telaFabricante = telaFabricante;
-        }
-
-        public char ApresentarMenu()
-        {
-            ExibirCabecalho("");
-            Console.WriteLine();
-            Console.WriteLine("1 - Cadastrar Equipamento");
-            Console.WriteLine("2 - Visualizar Equipamentos");
-            Console.WriteLine("3 - Editar Equipamento");
-            Console.WriteLine("4 - Excluir Equipamento");
-            Console.WriteLine("S - Sair");
-            Console.Write("\nDigite uma opção: ");
-            char opcaoEscolhida = Convert.ToChar(Console.ReadLine()!.ToUpper()[0]);
-
-            return opcaoEscolhida;
         }
 
         public bool ExecutarMenuEquipamento(TelaEquipamento telaEquipamento)
@@ -62,14 +47,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     break;
             }
             return true;
-        }
-
-        private void ExibirCabecalho(string pagina)
-        {
-            string nomeSolucao = "Gestão de Equipamentos";
-            Console.Clear();
-            Console.WriteLine($"----- {nomeSolucao}/{pagina} -----");
-            Console.WriteLine();
         }
 
         public bool Cadastrar()

@@ -6,40 +6,17 @@ using GestaoDeEquipamentosConsoleApp.Compartilhado;
 
 namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
-    public class TelaFabricante
+    public class TelaFabricante : TelaBase
     {
         private RepositorioFabricante repositorioFabricante;
         public Direcionar direcionar=new Direcionar();
         public string pagina;
 
-        public TelaFabricante(RepositorioFabricante repositorioFabricante)
+        public TelaFabricante(RepositorioFabricante repositorioFabricante) : base("Fabricante")
         {
             if (repositorioFabricante == null)
                 repositorioFabricante = new RepositorioFabricante();
             this.repositorioFabricante = repositorioFabricante;
-        }
-
-        private void ExibirCabecalho(string pagina)
-        {
-            string nomeSolucao = "Gestão de Fabricantes";
-            Console.Clear();
-            Console.WriteLine($"----- {nomeSolucao}/{pagina} -----");
-            Console.WriteLine();
-        }
-
-        public char ApresentarMenu()
-        {
-            ExibirCabecalho("");
-            Console.WriteLine();
-            Console.WriteLine("1 - Cadastrar Fabricante");
-            Console.WriteLine("2 - Visualizar Fabricante");
-            Console.WriteLine("3 - Editar Fabricante");
-            Console.WriteLine("4 - Excluir Fabricante");
-            Console.WriteLine("S - Sair");
-            Console.Write("\nDigite uma opção: ");
-            char opcaoEscolhida = Convert.ToChar(Console.ReadLine()!.ToUpper()[0]);
-
-            return opcaoEscolhida;
         }
 
         public bool ExecutarMenuFabricante(TelaFabricante telaFabricante)

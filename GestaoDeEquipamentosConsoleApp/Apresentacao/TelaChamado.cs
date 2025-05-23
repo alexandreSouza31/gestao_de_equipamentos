@@ -5,7 +5,7 @@ using GestaoDeEquipamentosConsoleApp.Utils;
 
 namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
-    public class TelaChamado
+    public class TelaChamado : TelaBase
     {
 
         public string pagina;
@@ -17,26 +17,11 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public TelaEquipamento telaEquipamento;
         public TelaFabricante telaFabricante;
 
-        public TelaChamado(RepositorioChamado repositorioChamado, RepositorioEquipamento repositorioEquipamento, TelaEquipamento telaEquipamento)
+        public TelaChamado(RepositorioChamado repositorioChamado, RepositorioEquipamento repositorioEquipamento, TelaEquipamento telaEquipamento) : base("Chamado")
         {
             this.repositorioChamado = repositorioChamado;
             this.repositorioEquipamento = repositorioEquipamento;
             this.telaEquipamento = telaEquipamento;
-        }
-
-        public char ApresentarMenu()
-        {
-            ExibirCabecalho("");
-            Console.WriteLine();
-            Console.WriteLine("1 - Cadastrar Chamado");
-            Console.WriteLine("2 - Visualizar Chamado");
-            Console.WriteLine("3 - Editar Chamado");
-            Console.WriteLine("4 - Excluir Chamado");
-            Console.WriteLine("S - Sair");
-            Console.Write("\nDigite uma opção: ");
-            char opcaoEscolhida = Convert.ToChar(Console.ReadLine()!.ToUpper()[0]);
-
-            return opcaoEscolhida;
         }
 
         public bool ExecutarMenuChamado(TelaChamado telaChamado)
@@ -66,14 +51,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     break;
             }
             return true;
-        }
-
-        private void ExibirCabecalho(string pagina)
-        {
-            string nomeSolucao = "Gestão de Chamados";
-            Console.Clear();
-            Console.WriteLine($"----- {nomeSolucao}/{pagina} -----");
-            Console.WriteLine();
         }
 
         public bool Cadastrar()

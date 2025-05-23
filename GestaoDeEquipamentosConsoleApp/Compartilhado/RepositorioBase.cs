@@ -1,6 +1,6 @@
 ﻿namespace GestaoDeEquipamentosConsoleApp.Compartilhado
 {
-    public class RepositorioBase<T> where T : IEntidade
+    public abstract class RepositorioBase<T> where T : IEntidade
     {
         private T[] registros = new T[100];
         private int contadorRegistros = 0;
