@@ -40,7 +40,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     telaFabricante.Excluir();
                     break;
                 default:
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Digite uma opção válida!");
+                    Console.ResetColor();
                     DigitarEnterEContinuar.Executar(true);
                     break;
             }
@@ -114,14 +116,18 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             if (novosDados == null)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Cadastro cancelado.");
+                Console.ResetColor();
                 return false;
             }
 
             novosDados.id = Fabricante.numeroId++;
             repositorioFabricante.CadastrarRegistro(novosDados);
 
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\nFabricante '{novosDados.nome}' cadastrado com sucesso! ID: {novosDados.id}");
+            Console.ResetColor();
             Console.Write("Digite [Enter] para continuar...");
             Console.ReadLine();
             return true;
@@ -134,7 +140,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             if (!repositorioFabricante.VerificarExistenciaRegistros())
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Nenhum fabricante cadastrado.");
+                Console.ResetColor();
                 DigitarEnterEContinuar.Executar();
                 return false;
             }
@@ -146,14 +154,18 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 Console.Write("\nDigite o Id do fabricante para editar: ");
                 if (!int.TryParse(Console.ReadLine(), out int idFabricante))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("ID inválido. Tente novamente.");
+                    Console.ResetColor();
                     DigitarEnterEContinuar.Executar();
                     continue;
                 }
 
                 if (!repositorioFabricante.TentarObterRegistro(idFabricante, out var fabricanteExistente))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Fabricante não encontrado. Tente novamente.");
+                    Console.ResetColor();
                     continue;
                 }
 
@@ -162,7 +174,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                 repositorioFabricante.EditarRegistro(idFabricante, novosDados);
 
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\nFabricante '{novosDados.nome}' editado com sucesso! id: {novosDados.id}");
+                Console.ResetColor();
                 DigitarEnterEContinuar.Executar();
                 return true;
             }
@@ -175,7 +189,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             if (!repositorioFabricante.VerificarExistenciaRegistros())
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Nenhum fabricante cadastrado.");
+                Console.ResetColor();
                 DigitarEnterEContinuar.Executar();
                 return false;
             }
@@ -186,13 +202,17 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 Console.Write("\nDigite o Id do fabricante para excluir: ");
                 if (!int.TryParse(Console.ReadLine(), out int idFabricante))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("ID inválido. Tente novamente.");
+                    Console.ResetColor();
                     continue;
                 }
 
                 if (!repositorioFabricante.TentarObterRegistro(idFabricante, out var fabricante))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Fabricante não encontrado. Tente novamente.");
+                    Console.ResetColor();
                     continue;
                 }
 
@@ -203,7 +223,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                 repositorioFabricante.ExcluirRegistro(idFabricante);
 
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\nFabricante '{fabricante.nome}' excluído com sucesso! id: {fabricante.id}");
+                Console.ResetColor();
                 DigitarEnterEContinuar.Executar();
                 return true;
             }
@@ -221,7 +243,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 if (editar)
                 {
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("************* Caso não queira alterar um campo, pressione Enter para mantê-lo.");
+                    Console.ResetColor();
                 }
 
                 string nome = RepositorioBase<Fabricante>.ObterEntrada("Nome", dadosOriginais.nome, editar);
@@ -234,8 +258,10 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                 if (!string.IsNullOrEmpty(erros))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\nErros encontrados:");
                     Console.WriteLine(erros);
+                    Console.ResetColor();
                     DigitarEnterEContinuar.Executar();
                     Console.Clear();
                     continue;

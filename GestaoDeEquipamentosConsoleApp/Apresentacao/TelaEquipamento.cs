@@ -42,7 +42,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     telaEquipamento.Excluir();
                     break;
                 default:
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Digite uma opção válida!");
+                    Console.ResetColor();
                     DigitarEnterEContinuar.Executar(true);
                     break;
             }
@@ -67,7 +69,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             equipamento.id = Equipamento.numeroId++;
             repositorioEquipamento.CadastrarRegistro(equipamento);
 
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
+            Console.ResetColor();
             DigitarEnterEContinuar.Executar();
             return true;
         }
@@ -149,14 +153,18 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                     Visualizar(true, false);
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"{equipamentoSelecionado.nome} editado com sucesso! id: {equipamentoSelecionado.id}");
+                    Console.ResetColor();
                     DigitarEnterEContinuar.Executar();
                     return true;
                 }
                 else
                 {
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("ID inválido. Tente novamente.");
+                    Console.ResetColor();
                 }
             }
         }
@@ -181,7 +189,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                 if (!int.TryParse(Console.ReadLine(), out int idEscolhido))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("ID inválido. Tente novamente.");
+                    Console.ResetColor ();
                     continue;
                 }
 
@@ -189,7 +199,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                 if (equipamento == null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Equipamento não encontrado. Tente novamente.");
+                    Console.ResetColor();
                     continue;
                 }
 
@@ -203,7 +215,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     {
                         equipamentos[i] = null;
                         Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"Equipamento {equipamento.nome} excluído com sucesso! id: {idEscolhido}");
+                        Console.ResetColor();
                         DigitarEnterEContinuar.Executar();
                         return true;
                     }
@@ -221,7 +235,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                 if (editar)
                 {
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
+                    Console.ResetColor();
                 }
 
                 string nome = RepositorioBase<Equipamento>.ObterEntrada("Nome", dadosOriginais.nome, editar);
@@ -243,7 +259,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                 if (fabricante == null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Fabricante não encontrado! Pressione Enter para continuar...");
+                    Console.ResetColor();
                     Console.ReadLine();
                     continue;
                 }
@@ -255,8 +273,10 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
                 if (!string.IsNullOrEmpty(erros))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\nErros encontrados:");
                     Console.WriteLine(erros);
+                    Console.ResetColor();
                     DigitarEnterEContinuar.Executar();
                     Console.Clear();
                     continue;
