@@ -54,7 +54,6 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
                 return false;
             }
 
-            novosDados.id = EntidadeBase.numeroId++;
             repositorio.CadastrarRegistro(novosDados);
 
             Console.ForegroundColor = ConsoleColor.Green;

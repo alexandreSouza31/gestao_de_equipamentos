@@ -4,7 +4,7 @@ namespace GestaoDeEquipamentosConsoleApp.Negocio
 {
     public class Fabricante : IEntidade
     {
-        public static int numeroId = 1;
+        private static int numeroId = 1;
 
         public int id { get; set; }
         public string nome { get; set; }
@@ -13,6 +13,7 @@ namespace GestaoDeEquipamentosConsoleApp.Negocio
 
         public Fabricante(string nome, string email, string telefone)
         {
+            this.id = numeroId++;
             this.nome = nome;
             this.email = email;
             this.telefone = telefone;

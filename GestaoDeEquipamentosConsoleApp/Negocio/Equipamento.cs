@@ -4,7 +4,7 @@ namespace GestaoDeEquipamentosConsoleApp.Negocio
 {
     public class Equipamento : IEntidade
     {
-        public static int numeroId = 1;
+        private static int numeroId = 1;
         public int id { get; set; }
         public string nome { get; set; }
         public decimal precoAquisicao { get; set; }
@@ -19,6 +19,7 @@ namespace GestaoDeEquipamentosConsoleApp.Negocio
 
         public Equipamento(string nome, decimal precoAquisicao, string numeroSerie,DateTime dataFabricacao,Fabricante fabricante)
         {
+            this.id = numeroId++;
             this.nome = nome;
             this.precoAquisicao = precoAquisicao;
             this.numeroSerie = numeroSerie;

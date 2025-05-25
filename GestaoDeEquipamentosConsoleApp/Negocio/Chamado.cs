@@ -13,6 +13,7 @@ namespace GestaoDeEquipamentosConsoleApp.Negocio
 
         public Chamado(string titulo, string descricao, DateTime dataAbertura,Equipamento equipamento)
         {
+            this.id = numeroId++;
             this.titulo = titulo;
             this.descricao = descricao;
             this.dataAbertura = dataAbertura;
