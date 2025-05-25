@@ -5,10 +5,10 @@ using GestaoDeEquipamentosConsoleApp.Utils;
 
 namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
-    public class TelaChamado : TelaBase
+    public class TelaChamado : TelaBase<Chamado>
     {
 
-        public string pagina;
+        //public string pagina;
         public RepositorioChamado repositorioChamado;
         public RepositorioEquipamento repositorioEquipamento;
         Direcionar direcionar = new Direcionar();
@@ -16,12 +16,19 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         private RepositorioFabricante repositorioFabricante;
         public TelaEquipamento telaEquipamento;
         public TelaFabricante telaFabricante;
+        public TelaChamado telaChamado;
 
-        public TelaChamado(RepositorioChamado repositorioChamado, RepositorioEquipamento repositorioEquipamento, TelaEquipamento telaEquipamento) : base("Chamado")
+        public TelaChamado(RepositorioChamado repositorioChamado, RepositorioEquipamento repositorioEquipamento, TelaEquipamento telaEquipamento)
+            : base("Chamado", repositorioChamado)
         {
             this.repositorioChamado = repositorioChamado;
             this.repositorioEquipamento = repositorioEquipamento;
             this.telaEquipamento = telaEquipamento;
+        }
+
+        public override Chamado CriarInstanciaVazia()
+        {
+            return new Chamado();
         }
 
         public bool ExecutarMenuChamado(TelaChamado telaChamado)
@@ -55,33 +62,10 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return true;
         }
 
-        public bool Cadastrar()
-        {
-            pagina = "Cadastrar chamado";
-            ExibirCabecalho(pagina);
-
-            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
-            var resultado = direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
-            if (resultado != ResultadoDirecionamento.Continuar) return false;
-
-            Chamado chamado = new Chamado("", "", new DateTime(1975, 1, 1),null);
-
-            var novosdados = ObterNovosDados(chamado, false ,this);
-            AtualizarChamado(chamado, novosdados, repositorioChamado);
-
-            chamado.id = Chamado.numeroId++;
-            repositorioChamado.CadastrarRegistro(chamado);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"chamado {chamado.titulo} cadastrado com sucesso! id: {chamado.id}");
-            Console.ResetColor();
-            DigitarEnterEContinuar.Executar();
-            return true;
-        }
-
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
-            pagina = "Visualizar chamado";
-            if (exibirCabecalho) ExibirCabecalho(pagina);
+            //pagina = "Visualizar chamado";
+            if (exibirCabecalho) ExibirCabecalho();
 
             bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
 
@@ -131,8 +115,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Editar()
         {
-            pagina = "Editar chamado";
-            ExibirCabecalho(pagina);
+            //pagina = "Editar chamado";
+            ExibirCabecalho();
 
             bool haChamados = repositorioChamado.VerificarExistenciaRegistros();
             var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
@@ -162,7 +146,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     continue;
                 }
 
-                Chamado novosDados = ObterNovosDados(chamadoExistente, true,this);
+                Chamado novosDados = ObterNovosDados(chamadoExistente, true);
                 novosDados.id = chamadoExistente.id;
                 AtualizarChamado(chamadoExistente, novosDados,repositorioChamado);
 
@@ -178,8 +162,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Excluir()
         {
-            pagina = "Excluir chamado";
-            ExibirCabecalho(pagina);
+            //pagina = "Excluir chamado";
+            ExibirCabecalho();
 
             bool haChamados = repositorioChamado.VerificarExistenciaRegistros();
             var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
@@ -228,12 +212,12 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        private Chamado ObterNovosDados(Chamado dadosOriginais, bool editar, TelaChamado telaChamado)
+        protected override Chamado ObterNovosDados(Chamado dadosOriginais, bool editar)
         {
-            pagina = "Cadastrar chamado";
+            //pagina = "Cadastrar chamado";
             if (editar)
             {
-                pagina = "Editar chamado";
+                //pagina = "Editar chamado";
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");
@@ -242,14 +226,14 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
             while (true)
             {
-                ExibirCabecalho(pagina);
+                ExibirCabecalho();
 
-                string titulo = RepositorioBase<Chamado>.ObterEntrada("Título", dadosOriginais.titulo, editar);
-                string descricao = RepositorioBase<Chamado>.ObterEntrada("Descrição", dadosOriginais.descricao, editar);
-                DateTime dataAbertura = RepositorioBase<Chamado>.ObterEntrada("Data de Abertura", dadosOriginais.dataAbertura, editar);
+                string titulo = EntradaHelper.ObterEntrada("Título", dadosOriginais.titulo, editar);
+                string descricao = EntradaHelper.ObterEntrada("Descrição", dadosOriginais.descricao, editar);
+                DateTime dataAbertura = EntradaHelper.ObterEntrada("Data de Abertura", dadosOriginais.dataAbertura, editar);
 
-                bool haEquipamentos = telaChamado.telaEquipamento.Visualizar(true, false, false);
-                var resultado = telaChamado.direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
+                bool haEquipamentos = telaEquipamento.Visualizar(true, false, false);
+                var resultado = direcionar.DirecionarParaMenu(haEquipamentos, true, "Equipamento");
 
                 if (resultado != ResultadoDirecionamento.Continuar)
                     return null!;
@@ -274,7 +258,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                         continue;
                     }
 
-                    equipamento = telaChamado.repositorioEquipamento.SelecionarRegistroPorId(idEquipamento);
+                    equipamento = repositorioEquipamento.SelecionarRegistroPorId(idEquipamento);
 
                     if (equipamento == null)
                     {

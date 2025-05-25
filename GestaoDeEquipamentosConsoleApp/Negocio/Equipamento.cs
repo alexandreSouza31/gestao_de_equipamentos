@@ -25,5 +25,7 @@ namespace GestaoDeEquipamentosConsoleApp.Negocio
             this.dataFabricacao = dataFabricacao;
             this.fabricante = fabricante;
         }
+
+        public Equipamento() {}
     }
 }

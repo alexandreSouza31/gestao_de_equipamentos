@@ -17,5 +17,7 @@ namespace GestaoDeEquipamentosConsoleApp.Negocio
             this.email = email;
             this.telefone = telefone;
         }
+
+        public Fabricante() {}
     }
 }

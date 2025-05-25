@@ -18,5 +18,7 @@ namespace GestaoDeEquipamentosConsoleApp.Negocio
             this.dataAbertura = dataAbertura;
             this.equipamento = equipamento;
         }
+
+        public Chamado() { }
     }
 }

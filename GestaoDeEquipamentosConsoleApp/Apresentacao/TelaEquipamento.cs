@@ -5,7 +5,7 @@ using GestaoDeEquipamentosConsoleApp.Utils;
 
 namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
-    public class TelaEquipamento : TelaBase
+    public class TelaEquipamento : TelaBase<Equipamento>
     {
         public string pagina;
         private RepositorioEquipamento repositorioEquipamento;
@@ -13,11 +13,17 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public TelaFabricante telaFabricante;
         Direcionar direcionar = new Direcionar();
 
-        public TelaEquipamento(RepositorioEquipamento repositorioEquipamento, RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante) : base("Equipamento")
+        public TelaEquipamento(RepositorioEquipamento repositorioEquipamento, RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante)
+            : base("Equipamento",repositorioEquipamento)
         {
             this.repositorioEquipamento = repositorioEquipamento;
             this.repositorioFabricante = repositorioFabricante;
             this.telaFabricante = telaFabricante;
+        }
+
+        public override Equipamento CriarInstanciaVazia()
+        {
+            return new Equipamento();
         }
 
         public bool ExecutarMenuEquipamento(TelaEquipamento telaEquipamento)
@@ -51,35 +57,10 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return true;
         }
 
-        public bool Cadastrar()
-        {
-            pagina = "Cadastrar";
-            ExibirCabecalho(pagina);
-
-            bool haFabricante = repositorioFabricante.VerificarExistenciaRegistros();
-            var resultado = direcionar.DirecionarParaMenu(haFabricante, true, "Fabricante");
-            if (resultado != ResultadoDirecionamento.Continuar) return false;
-
-            Equipamento equipamento = new Equipamento("", 0, "", new DateTime(1975, 1, 1), null);
-            var novosDados = ObterNovosDados(equipamento, false);
-            if (novosDados == null) return false;
-
-            AtualizarEquipamento(equipamento, novosDados);
-
-            equipamento.id = Equipamento.numeroId++;
-            repositorioEquipamento.CadastrarRegistro(equipamento);
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"nome: {equipamento.nome} cadastrado com sucesso! id: {equipamento.id}");
-            Console.ResetColor();
-            DigitarEnterEContinuar.Executar();
-            return true;
-        }
-
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
-            pagina = "Visualizar";
-            if (exibirCabecalho) ExibirCabecalho(pagina);
+            //pagina = "Visualizar";
+            if (exibirCabecalho) ExibirCabecalho();
 
             Equipamento[] equipamentos = repositorioEquipamento.SelecionarRegistros();
             int encontrados = 0;
@@ -116,8 +97,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Editar()
         {
-            pagina = "Editar";
-            ExibirCabecalho(pagina);
+            //pagina = "Editar";
+            ExibirCabecalho();
 
             bool visualizarCadastrados = Visualizar(false, false, false);
             bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
@@ -171,8 +152,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         internal bool Excluir()
         {
-            pagina = "Excluir";
-            ExibirCabecalho(pagina);
+            //pagina = "Excluir";
+            ExibirCabecalho();
 
             bool visualizarCadastrados = Visualizar(false, false, false);
             bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
@@ -225,12 +206,12 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        private Equipamento ObterNovosDados(Equipamento dadosOriginais, bool editar)
+        protected override Equipamento ObterNovosDados(Equipamento dadosOriginais, bool editar)
         {
             while (true)
             {
-                pagina = "Cadastrar";
-                ExibirCabecalho(pagina);
+                //pagina = "Cadastrar";
+                ExibirCabecalho();
 
                 if (editar)
                 {
@@ -240,10 +221,10 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     Console.ResetColor();
                 }
 
-                string nome = RepositorioBase<Equipamento>.ObterEntrada("Nome", dadosOriginais.nome, editar);
-                decimal precoAquisicao = RepositorioBase<Equipamento>.ObterEntrada("preço Aquisição", dadosOriginais.precoAquisicao, editar);
-                string numeroSerie = RepositorioBase<Equipamento>.ObterEntrada("número Série", dadosOriginais.numeroSerie, editar);
-                DateTime dataFabricacao = RepositorioBase<Equipamento>.ObterEntrada("data Fabricação", dadosOriginais.dataFabricacao, editar);
+                string nome = EntradaHelper.ObterEntrada("Nome", dadosOriginais.nome, editar);
+                decimal precoAquisicao = EntradaHelper.ObterEntrada("preço Aquisição", dadosOriginais.precoAquisicao, editar);
+                string numeroSerie = EntradaHelper.ObterEntrada("número Série", dadosOriginais.numeroSerie, editar);
+                DateTime dataFabricacao = EntradaHelper.ObterEntrada("data Fabricação", dadosOriginais.dataFabricacao, editar);
 
                 bool haFabricantes = telaFabricante.Visualizar(true, false, false);
                 var resultado = direcionar.DirecionarParaMenu(haFabricantes, true, "Fabricante");

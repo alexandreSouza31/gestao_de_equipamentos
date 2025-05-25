@@ -6,17 +6,24 @@ using GestaoDeEquipamentosConsoleApp.Compartilhado;
 
 namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
-    public class TelaFabricante : TelaBase
+    public class TelaFabricante : TelaBase<Fabricante>
     {
         private RepositorioFabricante repositorioFabricante;
-        public Direcionar direcionar=new Direcionar();
-        public string pagina;
+        public Direcionar direcionar = new Direcionar();
+        //public string pagina;
 
-        public TelaFabricante(RepositorioFabricante repositorioFabricante) : base("Fabricante")
+        public TelaFabricante(RepositorioFabricante repositorioFabricante)
+            : base("Fabricante", repositorioFabricante)
         {
             if (repositorioFabricante == null)
                 repositorioFabricante = new RepositorioFabricante();
-            this.repositorioFabricante = repositorioFabricante;
+
+            this.repositorioFabricante = repositorioFabricante ?? new RepositorioFabricante();
+        }
+
+        public override Fabricante CriarInstanciaVazia()
+        {
+            return new Fabricante();
         }
 
         public bool ExecutarMenuFabricante(TelaFabricante telaFabricante)
@@ -51,12 +58,12 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
-            pagina = "Visualizar Fabricante";
-            ExibirCabecalho(pagina);
+            //pagina = "Visualizar Fabricante";
+            ExibirCabecalho();
 
             Console.Clear();
             if (exibirCabecalho)
-                ExibirCabecalho(pagina);
+                ExibirCabecalho();
                 Console.WriteLine("----- Fabricantes Registrados -----");
 
             bool haEquipamentos = repositorioFabricante.VerificarExistenciaRegistros();
@@ -102,41 +109,41 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         }
 
 
-        public bool Cadastrar()
-        {
-            pagina = "Cadastrar chamado";
-            ExibirCabecalho(pagina);
+        //public bool Cadastrar()
+        //{
+        //    pagina = "Cadastrar chamado";
+        //    ExibirCabecalho(pagina);
 
-            Console.Clear();
-            Console.WriteLine("----- Cadastro de Fabricante -----");
+        //    Console.Clear();
+        //    Console.WriteLine("----- Cadastro de Fabricante -----");
 
-            Fabricante dadosIniciais = new Fabricante("", "", "");
+        //    Fabricante dadosIniciais = new Fabricante("", "", "");
 
-            var novosDados = ObterNovosDados(dadosIniciais, false);
+        //    var novosDados = ObterNovosDados(dadosIniciais, false);
 
-            if (novosDados == null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Cadastro cancelado.");
-                Console.ResetColor();
-                return false;
-            }
+        //    if (novosDados == null)
+        //    {
+        //        Console.ForegroundColor = ConsoleColor.Red;
+        //        Console.WriteLine("Cadastro cancelado.");
+        //        Console.ResetColor();
+        //        return false;
+        //    }
 
-            novosDados.id = Fabricante.numeroId++;
-            repositorioFabricante.CadastrarRegistro(novosDados);
+        //    novosDados.id = Fabricante.numeroId++;
+        //    repositorioFabricante.CadastrarRegistro(novosDados);
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\nFabricante '{novosDados.nome}' cadastrado com sucesso! ID: {novosDados.id}");
-            Console.ResetColor();
-            Console.Write("Digite [Enter] para continuar...");
-            Console.ReadLine();
-            return true;
-        }
+        //    Console.ForegroundColor = ConsoleColor.Green;
+        //    Console.WriteLine($"\nFabricante '{novosDados.nome}' cadastrado com sucesso! ID: {novosDados.id}");
+        //    Console.ResetColor();
+        //    Console.Write("Digite [Enter] para continuar...");
+        //    Console.ReadLine();
+        //    return true;
+        //}
 
         public bool Editar()
         {
-            pagina = "Editar Fabricante";
-            ExibirCabecalho(pagina);
+            //pagina = "Editar Fabricante";
+            ExibirCabecalho();
 
             if (!repositorioFabricante.VerificarExistenciaRegistros())
             {
@@ -184,8 +191,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         public bool Excluir()
         {
-            pagina = "Excluir chamado";
-            ExibirCabecalho(pagina);
+            //pagina = "Excluir chamado";
+            ExibirCabecalho();
 
             if (!repositorioFabricante.VerificarExistenciaRegistros())
             {
@@ -231,14 +238,14 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             }
         }
 
-        private Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
+        protected override Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
         {
             var tela = new TelaFabricante(null);
             while (true)
             {
                 tela.Visualizar(false, false, false);
-                pagina = "Cadastrar Fabricante";
-                ExibirCabecalho(pagina);
+                //pagina = "Cadastrar Fabricante";
+                ExibirCabecalho();
 
                 if (editar)
                 {
@@ -248,9 +255,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     Console.ResetColor();
                 }
 
-                string nome = RepositorioBase<Fabricante>.ObterEntrada("Nome", dadosOriginais.nome, editar);
-                string email = RepositorioBase<Fabricante>.ObterEntrada("Email", dadosOriginais.email, editar);
-                string telefone = RepositorioBase<Fabricante>.ObterEntrada("Telefone", dadosOriginais.telefone, editar);
+                string nome = EntradaHelper.ObterEntrada("Nome", dadosOriginais.nome, editar);
+                string email = EntradaHelper.ObterEntrada("Email", dadosOriginais.email, editar);
+                string telefone = EntradaHelper.ObterEntrada("Telefone", dadosOriginais.telefone, editar);
 
                 string[] nomesCampos = { "nome", "email", "telefone" };
                 string[] valoresCampos = { nome, email, telefone };
