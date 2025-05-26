@@ -16,11 +16,11 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
             this.repositorio = repositorio;
         }
 
-        protected void ExibirCabecalho()
+        protected void ExibirCabecalho(string contexto="")
         {
             string nomeSolucao = "Gestão de Equipamentos";
             Console.Clear();
-            Console.WriteLine($"----- {nomeSolucao}/{nomeEntidade} -----");
+            Console.WriteLine($"----- {nomeSolucao}/Menu {nomeEntidade}/{contexto} {nomeEntidade} -----");
             Console.WriteLine();
         }
 
@@ -41,7 +41,7 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
 
         public bool Cadastrar()
         {
-            ExibirCabecalho();
+            ExibirCabecalho("cadastrar");
 
             T dadosIniciais = CriarInstanciaVazia();
 
@@ -67,8 +67,7 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
 
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
         {
-            //pagina = "Visualizar Fabricante";
-            ExibirCabecalho();
+            ExibirCabecalho("visualizar");
 
             Console.Clear();
             if (exibirCabecalho)
@@ -111,8 +110,7 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
 
         public bool Editar()
         {
-            //pagina = "Editar Fabricante";
-            ExibirCabecalho();
+            ExibirCabecalho("editar");
 
             if (!repositorio.VerificarExistenciaRegistros())
             {
@@ -160,8 +158,7 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
 
         public bool Excluir()
         {
-            //pagina = "Excluir chamado";
-            ExibirCabecalho();
+            ExibirCabecalho("excluir");
 
             if (!repositorio.VerificarExistenciaRegistros())
             {

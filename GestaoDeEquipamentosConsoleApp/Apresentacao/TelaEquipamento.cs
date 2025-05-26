@@ -56,62 +56,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return true;
         }
 
-        //internal bool Excluir()
-        //{
-        //    //pagina = "Excluir";
-        //    ExibirCabecalho();
-
-        //    bool visualizarCadastrados = Visualizar(false, false, false);
-        //    bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
-
-        //    var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
-        //    if (resultado != ResultadoDirecionamento.Continuar) return false;
-
-        //    Equipamento[] equipamentos = repositorioEquipamento.SelecionarRegistros();
-
-        //    while (true)
-        //    {
-        //        Console.WriteLine();
-        //        Console.Write("Digite o Id do equipamento para excluir: ");
-
-        //        if (!int.TryParse(Console.ReadLine(), out int idEscolhido))
-        //        {
-        //            Console.ForegroundColor = ConsoleColor.Red;
-        //            Console.WriteLine("ID inválido. Tente novamente.");
-        //            Console.ResetColor ();
-        //            continue;
-        //        }
-
-        //        var equipamento = repositorioEquipamento.SelecionarRegistroPorId(idEscolhido);
-
-        //        if (equipamento == null)
-        //        {
-        //            Console.ForegroundColor = ConsoleColor.Red;
-        //            Console.WriteLine("Equipamento não encontrado. Tente novamente.");
-        //            Console.ResetColor();
-        //            continue;
-        //        }
-
-        //        DesejaExcluir desejaExcluir = new DesejaExcluir();
-        //        var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(equipamento.nome);
-        //        if (vaiExcluir != "S") return false;
-
-        //        for (int i = 0; i < equipamentos.Length; i++)
-        //        {
-        //            if (equipamentos[i] != null && equipamentos[i].id == idEscolhido)
-        //            {
-        //                equipamentos[i] = null;
-        //                Console.WriteLine();
-        //                Console.ForegroundColor = ConsoleColor.Green;
-        //                Console.WriteLine($"Equipamento {equipamento.nome} excluído com sucesso! id: {idEscolhido}");
-        //                Console.ResetColor();
-        //                DigitarEnterEContinuar.Executar();
-        //                return true;
-        //            }
-        //        }
-        //    }
-        //}
-
         protected override Equipamento ObterNovosDados(Equipamento dadosOriginais, bool editar)
         {
             while (true)
