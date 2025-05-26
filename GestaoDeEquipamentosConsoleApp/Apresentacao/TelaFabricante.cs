@@ -53,54 +53,54 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return true;
         }
 
-        public bool Excluir()
-        {
-            //pagina = "Excluir chamado";
-            ExibirCabecalho();
+        //public bool Excluir()
+        //{
+        //    //pagina = "Excluir chamado";
+        //    ExibirCabecalho();
 
-            if (!repositorioFabricante.VerificarExistenciaRegistros())
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Nenhum fabricante cadastrado.");
-                Console.ResetColor();
-                DigitarEnterEContinuar.Executar();
-                return false;
-            }
+        //    if (!repositorioFabricante.VerificarExistenciaRegistros())
+        //    {
+        //        Console.ForegroundColor = ConsoleColor.Red;
+        //        Console.WriteLine("Nenhum fabricante cadastrado.");
+        //        Console.ResetColor();
+        //        DigitarEnterEContinuar.Executar();
+        //        return false;
+        //    }
 
 
-            while (true)
-            {
-                Console.Write("\nDigite o Id do fabricante para excluir: ");
-                if (!int.TryParse(Console.ReadLine(), out int idFabricante))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ID inválido. Tente novamente.");
-                    Console.ResetColor();
-                    continue;
-                }
+        //    while (true)
+        //    {
+        //        Console.Write("\nDigite o Id do fabricante para excluir: ");
+        //        if (!int.TryParse(Console.ReadLine(), out int idFabricante))
+        //        {
+        //            Console.ForegroundColor = ConsoleColor.Red;
+        //            Console.WriteLine("ID inválido. Tente novamente.");
+        //            Console.ResetColor();
+        //            continue;
+        //        }
 
-                if (!repositorioFabricante.TentarObterRegistro(idFabricante, out var fabricante))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Fabricante não encontrado. Tente novamente.");
-                    Console.ResetColor();
-                    continue;
-                }
+        //        if (!repositorioFabricante.TentarObterRegistro(idFabricante, out var fabricante))
+        //        {
+        //            Console.ForegroundColor = ConsoleColor.Red;
+        //            Console.WriteLine("Fabricante não encontrado. Tente novamente.");
+        //            Console.ResetColor();
+        //            continue;
+        //        }
 
-                DesejaExcluir desejaExcluir = new DesejaExcluir();
-                var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(fabricante.nome);
+        //        DesejaExcluir desejaExcluir = new DesejaExcluir();
+        //        var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(fabricante.nome);
 
-                if (vaiExcluir != "S") return false;
+        //        if (vaiExcluir != "S") return false;
 
-                repositorioFabricante.ExcluirRegistro(idFabricante);
+        //        repositorioFabricante.ExcluirRegistro(idFabricante);
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"\nFabricante '{fabricante.nome}' excluído com sucesso! id: {fabricante.id}");
-                Console.ResetColor();
-                DigitarEnterEContinuar.Executar();
-                return true;
-            }
-        }
+        //        Console.ForegroundColor = ConsoleColor.Green;
+        //        Console.WriteLine($"\nFabricante '{fabricante.nome}' excluído com sucesso! id: {fabricante.id}");
+        //        Console.ResetColor();
+        //        DigitarEnterEContinuar.Executar();
+        //        return true;
+        //    }
+        //}
 
         protected override Fabricante ObterNovosDados(Fabricante dadosOriginais, bool editar)
         {

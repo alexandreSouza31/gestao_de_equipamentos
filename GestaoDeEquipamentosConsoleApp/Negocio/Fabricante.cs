@@ -20,5 +20,10 @@ namespace GestaoDeEquipamentosConsoleApp.Negocio
         }
 
         public Fabricante() {}
+
+        public override string ToString()
+        {
+            return nome;
+        }
     }
 }

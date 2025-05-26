@@ -18,7 +18,7 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public TelaFabricante telaFabricante;
         public TelaChamado telaChamado;
 
-        public TelaChamado(RepositorioChamado? repositorioChamado = null, RepositorioEquipamento repositorioEquipamento, TelaEquipamento telaEquipamento)
+        public TelaChamado(RepositorioChamado repositorioChamado, RepositorioEquipamento repositorioEquipamento, TelaEquipamento telaEquipamento)
             : base("Chamado", repositorioChamado ?? new RepositorioChamado())
         {
             this.repositorioChamado = repositorioChamado ?? new RepositorioChamado();
@@ -62,57 +62,57 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             return true;
         }
 
-        public bool Excluir()
-        {
-            //pagina = "Excluir chamado";
-            ExibirCabecalho();
+        //public bool Excluir()
+        //{
+        //    //pagina = "Excluir chamado";
+        //    ExibirCabecalho();
 
-            bool haChamados = repositorioChamado.VerificarExistenciaRegistros();
-            var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
-            if (resultado != ResultadoDirecionamento.Continuar) return false;
+        //    bool haChamados = repositorioChamado.VerificarExistenciaRegistros();
+        //    var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
+        //    if (resultado != ResultadoDirecionamento.Continuar) return false;
 
-            bool visualizarCadastrados = Visualizar(false, false,false);
-            if (!visualizarCadastrados) return false;
+        //    bool visualizarCadastrados = Visualizar(false, false,false);
+        //    if (!visualizarCadastrados) return false;
 
-            Chamado[] chamados = repositorioChamado.SelecionarRegistros();
+        //    Chamado[] chamados = repositorioChamado.SelecionarRegistros();
 
-            while (true)
-            {
-                Console.WriteLine();
-                Console.Write("Digite o Id do chamado para excluir: ");
+        //    while (true)
+        //    {
+        //        Console.WriteLine();
+        //        Console.Write("Digite o Id do chamado para excluir: ");
 
-                bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
-                var chamado = repositorioChamado.SelecionarRegistroPorId(idEscolhido);
+        //        bool idValido = (!int.TryParse(Console.ReadLine(), out int idEscolhido));
+        //        var chamado = repositorioChamado.SelecionarRegistroPorId(idEscolhido);
 
-                if (!idValido && chamado == null)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ID inválido. Tente novamente.");
-                    Console.ResetColor();
-                    continue;
-                }
+        //        if (!idValido && chamado == null)
+        //        {
+        //            Console.ForegroundColor = ConsoleColor.Red;
+        //            Console.WriteLine("ID inválido. Tente novamente.");
+        //            Console.ResetColor();
+        //            continue;
+        //        }
 
-                for (int i = 0; i < chamados.Length; i++)
-                {
-                    if (chamados[i] == null) continue;
+        //        for (int i = 0; i < chamados.Length; i++)
+        //        {
+        //            if (chamados[i] == null) continue;
 
-                    if (idEscolhido == chamados[i].id)
-                    {
-                        DesejaExcluir desejaExcluir = new DesejaExcluir();
-                        var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(chamado.titulo);
-                        if (vaiExcluir != "S") return false;
+        //            if (idEscolhido == chamados[i].id)
+        //            {
+        //                DesejaExcluir desejaExcluir = new DesejaExcluir();
+        //                var vaiExcluir = desejaExcluir.DesejaMesmoExcluir(chamado.titulo);
+        //                if (vaiExcluir != "S") return false;
 
-                        Console.WriteLine();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"Chamado {chamado.titulo} excluído com sucesso! id: {idEscolhido}");
-                        Console.ResetColor();
-                        chamados[i] = null;
-                        DigitarEnterEContinuar.Executar();
-                        return true;
-                    }
-                }
-            }
-        }
+        //                Console.WriteLine();
+        //                Console.ForegroundColor = ConsoleColor.Green;
+        //                Console.WriteLine($"Chamado {chamado.titulo} excluído com sucesso! id: {idEscolhido}");
+        //                Console.ResetColor();
+        //                chamados[i] = null;
+        //                DigitarEnterEContinuar.Executar();
+        //                return true;
+        //            }
+        //        }
+        //    }
+        //}
 
         protected override Chamado ObterNovosDados(Chamado dadosOriginais, bool editar)
         {

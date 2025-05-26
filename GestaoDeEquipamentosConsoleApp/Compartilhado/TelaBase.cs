@@ -158,6 +158,55 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
             }
         }
 
+        public bool Excluir()
+        {
+            //pagina = "Excluir chamado";
+            ExibirCabecalho();
+
+            if (!repositorio.VerificarExistenciaRegistros())
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Nenhum {nomeEntidade} cadastrado.");
+                Console.ResetColor();
+                DigitarEnterEContinuar.Executar();
+                return false;
+            }
+
+            Visualizar(true, false, false);
+            while (true)
+            {
+                Console.Write($"\nDigite o Id do {nomeEntidade} para excluir: ");
+                if (!int.TryParse(Console.ReadLine(), out int idRegistro))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("ID inválido. Tente novamente.");
+                    Console.ResetColor();
+                    continue;
+                }
+
+                if (!repositorio.TentarObterRegistro(idRegistro, out var registro))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"{nomeEntidade} não encontrado. Tente novamente.");
+                    Console.ResetColor();
+                    continue;
+                }
+
+                DesejaExcluir desejaExcluir = new DesejaExcluir();
+                var vaiExcluir = desejaExcluir.DesejaMesmoExcluir($"esse {nomeEntidade}");
+
+                if (vaiExcluir != "S") return false;
+
+                repositorio.ExcluirRegistro(idRegistro);
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"\n{nomeEntidade} excluído com sucesso! id: {registro.id}");
+                Console.ResetColor();
+                DigitarEnterEContinuar.Executar();
+                return true;
+            }
+        }
+
         public abstract T CriarInstanciaVazia();
 
         protected abstract T ObterNovosDados(T dadosIniciais, bool editar);
