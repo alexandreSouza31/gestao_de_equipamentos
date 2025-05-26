@@ -12,12 +12,9 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public Direcionar direcionar = new Direcionar();
         //public string pagina;
 
-        public TelaFabricante(RepositorioFabricante repositorioFabricante)
-            : base("Fabricante", repositorioFabricante)
+        public TelaFabricante(RepositorioFabricante? repositorioFabricante = null)
+            : base("Fabricante", repositorioFabricante ?? new RepositorioFabricante())
         {
-            if (repositorioFabricante == null)
-                repositorioFabricante = new RepositorioFabricante();
-
             this.repositorioFabricante = repositorioFabricante ?? new RepositorioFabricante();
         }
 
@@ -54,139 +51,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     break;
             }
             return true;
-        }
-
-        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
-        {
-            //pagina = "Visualizar Fabricante";
-            ExibirCabecalho();
-
-            Console.Clear();
-            if (exibirCabecalho)
-                ExibirCabecalho();
-                Console.WriteLine("----- Fabricantes Registrados -----");
-
-            bool haEquipamentos = repositorioFabricante.VerificarExistenciaRegistros();
-
-            bool haChamados = repositorioFabricante.SelecionarRegistros().Length > 0;
-            var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
-            if (resultado != ResultadoDirecionamento.Continuar) return false;
-
-            object[] fabricantes = repositorioFabricante.SelecionarRegistros();
-            int encontrados = 0;
-
-            string tamanhoCabecalhoColunas = "{0, -5} | {1, -20} | {2, -25} | {3, -15}";
-
-            for (int i = 0; i < fabricantes.Length; i++)
-            {
-                Fabricante f = (Fabricante)fabricantes[i];
-                if (f == null) continue;
-
-                if (encontrados == 0)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine(
-                        tamanhoCabecalhoColunas,
-                        "ID".ToUpper(), "NOME".ToUpper(), "EMAIL".ToUpper(), "TELEFONE".ToUpper()
-                    );
-                }
-
-                Console.WriteLine(
-                    tamanhoCabecalhoColunas,
-                    f.id, f.nome, f.email, f.telefone
-                );
-
-                encontrados++;
-            }
-
-            if (encontrados == 0 && msgAoCadastrar)
-                Console.WriteLine("Ainda não há fabricantes! Faça um cadastro!");
-
-            if (digitarEnterEContinuar)
-                DigitarEnterEContinuar.Executar();
-
-            return encontrados > 0;
-        }
-
-
-        //public bool Cadastrar()
-        //{
-        //    pagina = "Cadastrar chamado";
-        //    ExibirCabecalho(pagina);
-
-        //    Console.Clear();
-        //    Console.WriteLine("----- Cadastro de Fabricante -----");
-
-        //    Fabricante dadosIniciais = new Fabricante("", "", "");
-
-        //    var novosDados = ObterNovosDados(dadosIniciais, false);
-
-        //    if (novosDados == null)
-        //    {
-        //        Console.ForegroundColor = ConsoleColor.Red;
-        //        Console.WriteLine("Cadastro cancelado.");
-        //        Console.ResetColor();
-        //        return false;
-        //    }
-
-        //    novosDados.id = Fabricante.numeroId++;
-        //    repositorioFabricante.CadastrarRegistro(novosDados);
-
-        //    Console.ForegroundColor = ConsoleColor.Green;
-        //    Console.WriteLine($"\nFabricante '{novosDados.nome}' cadastrado com sucesso! ID: {novosDados.id}");
-        //    Console.ResetColor();
-        //    Console.Write("Digite [Enter] para continuar...");
-        //    Console.ReadLine();
-        //    return true;
-        //}
-
-        public bool Editar()
-        {
-            //pagina = "Editar Fabricante";
-            ExibirCabecalho();
-
-            if (!repositorioFabricante.VerificarExistenciaRegistros())
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Nenhum fabricante cadastrado.");
-                Console.ResetColor();
-                DigitarEnterEContinuar.Executar();
-                return false;
-            }
-
-            Visualizar(true, false, false);
-
-            while (true)
-            {
-                Console.Write("\nDigite o Id do fabricante para editar: ");
-                if (!int.TryParse(Console.ReadLine(), out int idFabricante))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ID inválido. Tente novamente.");
-                    Console.ResetColor();
-                    DigitarEnterEContinuar.Executar();
-                    continue;
-                }
-
-                if (!repositorioFabricante.TentarObterRegistro(idFabricante, out var fabricanteExistente))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Fabricante não encontrado. Tente novamente.");
-                    Console.ResetColor();
-                    continue;
-                }
-
-                var novosDados = ObterNovosDados(fabricanteExistente, true);
-                novosDados.id = fabricanteExistente.id;
-
-                repositorioFabricante.EditarRegistro(idFabricante, novosDados);
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"\nFabricante '{novosDados.nome}' editado com sucesso! id: {novosDados.id}");
-                Console.ResetColor();
-                DigitarEnterEContinuar.Executar();
-                return true;
-            }
         }
 
         public bool Excluir()
@@ -282,6 +146,18 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             original.nome = novosDados.nome;
             original.email = novosDados.email;
             original.telefone = novosDados.telefone;
+        }
+
+        protected override void ImprimirCabecalhoTabela()
+        {
+            Console.WriteLine("{0, -5} | {1, -20} | {2, -25} | {3, -15}",
+                "ID".ToUpper(), "NOME".ToUpper(), "EMAIL".ToUpper(), "TELEFONE".ToUpper());
+        }
+
+        protected override void ImprimirRegistro(Fabricante f)
+        {
+            Console.WriteLine("{0, -5} | {1, -20} | {2, -25} | {3, -15}",
+                f.id, f.nome, f.email, f.telefone);
         }
     }
 }

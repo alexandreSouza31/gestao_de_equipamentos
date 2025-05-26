@@ -18,10 +18,10 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public TelaFabricante telaFabricante;
         public TelaChamado telaChamado;
 
-        public TelaChamado(RepositorioChamado repositorioChamado, RepositorioEquipamento repositorioEquipamento, TelaEquipamento telaEquipamento)
-            : base("Chamado", repositorioChamado)
+        public TelaChamado(RepositorioChamado? repositorioChamado = null, RepositorioEquipamento repositorioEquipamento, TelaEquipamento telaEquipamento)
+            : base("Chamado", repositorioChamado ?? new RepositorioChamado())
         {
-            this.repositorioChamado = repositorioChamado;
+            this.repositorioChamado = repositorioChamado ?? new RepositorioChamado();
             this.repositorioEquipamento = repositorioEquipamento;
             this.telaEquipamento = telaEquipamento;
         }
@@ -60,104 +60,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     break;
             }
             return true;
-        }
-
-        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
-        {
-            //pagina = "Visualizar chamado";
-            if (exibirCabecalho) ExibirCabecalho();
-
-            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
-
-            if (msgAoCadastrar==true)
-            {
-                bool haChamados = repositorioChamado.SelecionarRegistros().Length > 0;
-                var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
-                if (resultado != ResultadoDirecionamento.Continuar) return false;
-
-            }
-
-            Chamado[] chamados = repositorioChamado.SelecionarRegistros();
-            int encontrados = 0;
-
-            string tamanhoCabecalhoColunas = "{0, -5} | {1, -20} | {2, -40} | {3, -15} | {4, -15}";
-
-            for (int i = 0; i < chamados.Length; i++)
-            {
-                Chamado e = chamados[i];
-                if (e == null) continue;
-
-                if (encontrados == 0)
-                {
-                    Console.WriteLine(
-                        tamanhoCabecalhoColunas,
-                        "Id".ToUpper(), "Título".ToUpper(), "Descrição".ToUpper(), "Data Abertura".ToUpper(), "Equipamento".ToUpper()
-                    );
-                }
-
-                Console.WriteLine(
-                    tamanhoCabecalhoColunas,
-                    e.id, e.titulo, e.descricao, e.dataAbertura.ToShortDateString(), e.equipamento
-                );
-
-                encontrados++;
-            }
-
-            if (encontrados == 0 && msgAoCadastrar)
-                Console.WriteLine("Ainda não há chamados! Faça um cadastro!");
-
-            if (digitarEnterEContinuar)
-                DigitarEnterEContinuar.Executar();
-
-            return encontrados > 0;
-        }
-
-
-        public bool Editar()
-        {
-            //pagina = "Editar chamado";
-            ExibirCabecalho();
-
-            bool haChamados = repositorioChamado.VerificarExistenciaRegistros();
-            var resultado = direcionar.DirecionarParaMenu(haChamados, false, "Chamado");
-            if (resultado != ResultadoDirecionamento.Continuar) return false;
-            bool visualizarCadastrados = Visualizar(true, false, false);
-            if (!visualizarCadastrados) return false;
-
-            while (true)
-            {
-                Console.WriteLine();
-                Console.Write("Digite o Id do chamado para editar: ");
-                if (!int.TryParse(Console.ReadLine(), out int idChamado))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ID inválido. Tente novamente.");
-                    Console.ResetColor();
-                    continue;
-                }
-
-                Chamado chamadoExistente = repositorioChamado.SelecionarRegistroPorId(idChamado);
-
-                if (chamadoExistente == null)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Chamado não encontrado. Tente novamente.");
-                    Console.ResetColor();
-                    continue;
-                }
-
-                Chamado novosDados = ObterNovosDados(chamadoExistente, true);
-                novosDados.id = chamadoExistente.id;
-                AtualizarChamado(chamadoExistente, novosDados,repositorioChamado);
-
-                Visualizar(true, false);
-                Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"{chamadoExistente.titulo} editado com sucesso! id: {chamadoExistente.id}");
-                Console.ResetColor();
-                DigitarEnterEContinuar.Executar();
-                return true;
-            }
         }
 
         public bool Excluir()
@@ -304,6 +206,18 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     break;
                 }
             }
+        }
+
+        protected override void ImprimirCabecalhoTabela()
+        {
+            Console.WriteLine("{0, -5} | {1, -20} | {2, -40} | {3, -15} | {4, -15}",
+                 "Id".ToUpper(), "Título".ToUpper(), "Descrição".ToUpper(), "Data Abertura".ToUpper(), "Equipamento".ToUpper());
+        }
+
+        protected override void ImprimirRegistro(Chamado c)
+        {
+            Console.WriteLine("{0, -5} | {1, -20} | {2, -40} | {3, -15} | {4, -15}",
+                c.id, c.titulo, c.descricao, c.dataAbertura.ToShortDateString(), c.equipamento);
         }
     }
 }

@@ -13,14 +13,13 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         public TelaFabricante telaFabricante;
         Direcionar direcionar = new Direcionar();
 
-        public TelaEquipamento(RepositorioEquipamento repositorioEquipamento, RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante)
-            : base("Equipamento",repositorioEquipamento)
+        public TelaEquipamento(RepositorioEquipamento? repositorioEquipamento=null, RepositorioFabricante repositorioFabricante, TelaFabricante telaFabricante)
+            : base("Equipamento",repositorioEquipamento ?? new RepositorioEquipamento())
         {
-            this.repositorioEquipamento = repositorioEquipamento;
+            this.repositorioEquipamento = repositorioEquipamento ?? new RepositorioEquipamento();
             this.repositorioFabricante = repositorioFabricante;
             this.telaFabricante = telaFabricante;
         }
-
         public override Equipamento CriarInstanciaVazia()
         {
             return new Equipamento();
@@ -55,99 +54,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
                     break;
             }
             return true;
-        }
-
-        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
-        {
-            //pagina = "Visualizar";
-            if (exibirCabecalho) ExibirCabecalho();
-
-            Equipamento[] equipamentos = repositorioEquipamento.SelecionarRegistros();
-            int encontrados = 0;
-
-            string tamanhoCabecalhoColunas = "{0, -5} | {1, -30} | {2, -15} | {3, -15} | {4, -15} | {5, -10}";
-
-            for (int i = 0; i < equipamentos.Length; i++)
-            {
-                Equipamento e = equipamentos[i];
-                if (e == null) continue;
-
-                if (encontrados == 0)
-                {
-                    Console.WriteLine(
-                        tamanhoCabecalhoColunas,
-                        "Id".ToUpper(), "Nome".ToUpper(), "Preço Aquisicao".ToUpper(), "Numero Série".ToUpper(), "Data Fabricação".ToUpper(), "Fabricante".ToUpper()
-                    );
-                }
-
-                Console.WriteLine(
-                    tamanhoCabecalhoColunas,
-                    e.id, e.nome, e.precoAquisicao.ToString("C2"), e.numeroSerie, e.dataFabricacao.ToShortDateString(), e.fabricante.nome
-                );
-
-                encontrados++;
-            }
-
-            if (encontrados == 0 && msgAoCadastrar) Console.WriteLine("Ainda não há equipamentos! Faça um cadastro!");
-
-            if (digitarEnterEContinuar) DigitarEnterEContinuar.Executar();
-            return encontrados > 0;
-        }
-
-
-        public bool Editar()
-        {
-            //pagina = "Editar";
-            ExibirCabecalho();
-
-            bool visualizarCadastrados = Visualizar(false, false, false);
-            bool haEquipamentos = repositorioEquipamento.VerificarExistenciaRegistros();
-            var resultado = direcionar.DirecionarParaMenu(haEquipamentos, false, "Equipamento");
-            if (resultado != ResultadoDirecionamento.Continuar) return false;
-
-            Equipamento[] equipamentos = repositorioEquipamento.SelecionarRegistros();
-
-            while (true)
-            {
-                Console.WriteLine();
-                Console.Write("Digite o Id do equipamento para editar: ");
-                int idEscolhido = Convert.ToInt32(Console.ReadLine()!);
-
-                Equipamento equipamentoSelecionado = null;
-
-                for (int i = 0; i < equipamentos.Length; i++)
-                {
-                    Equipamento e = equipamentos[i];
-                    if (e == null) continue;
-
-                    if (idEscolhido == e.id)
-                    {
-                        equipamentoSelecionado = e;
-                        break;
-                    }
-                }
-
-                if (equipamentoSelecionado != null)
-                {
-                    var novosDados = ObterNovosDados(equipamentoSelecionado, true);
-                    AtualizarEquipamento(equipamentoSelecionado, novosDados);
-
-                    Visualizar(true, false);
-                    Console.WriteLine();
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"{equipamentoSelecionado.nome} editado com sucesso! id: {equipamentoSelecionado.id}");
-                    Console.ResetColor();
-                    DigitarEnterEContinuar.Executar();
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ID inválido. Tente novamente.");
-                    Console.ResetColor();
-                }
-            }
         }
 
         internal bool Excluir()
@@ -275,6 +181,18 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             dadosOriginais.numeroSerie = novosDados.numeroSerie;
             dadosOriginais.dataFabricacao = novosDados.dataFabricacao;
             dadosOriginais.fabricante = novosDados.fabricante;
+        }
+
+        protected override void ImprimirCabecalhoTabela()
+        {
+            Console.WriteLine("{0, -5} | {1, -30} | {2, -15} | {3, -15} | {4, -15} | {5, -10}",
+                "Id".ToUpper(), "Nome".ToUpper(), "Preço Aquisicao".ToUpper(), "Numero Série".ToUpper(), "Data Fabricação".ToUpper(), "Fabricante".ToUpper());
+        }
+
+        protected override void ImprimirRegistro(Equipamento e)
+        {
+            Console.WriteLine("{0, -5} | {1, -30} | {2, -15} | {3, -15} | {4, -15} | {5, -10}",
+                e.id, e.nome, e.precoAquisicao.ToString("C2"), e.numeroSerie,e.dataFabricacao.ToShortDateString(),e.fabricante);
         }
     }
 }

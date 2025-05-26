@@ -1,5 +1,6 @@
 ﻿using GestaoDeEquipamentosConsoleApp.Dados;
 using GestaoDeEquipamentosConsoleApp.Negocio;
+using GestaoDeEquipamentosConsoleApp.Utils;
 using System.Security.Cryptography.X509Certificates;
 
 namespace GestaoDeEquipamentosConsoleApp.Compartilhado
@@ -64,8 +65,105 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
             return true;
         }
 
+        public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
+        {
+            //pagina = "Visualizar Fabricante";
+            ExibirCabecalho();
+
+            Console.Clear();
+            if (exibirCabecalho)
+                ExibirCabecalho();
+            Console.WriteLine($"----- {nomeEntidade}s Registrados -----");
+
+            bool haRegistros = repositorio.VerificarExistenciaRegistros();
+
+            if (!haRegistros && msgAoCadastrar)
+            {
+                Console.WriteLine($"Ainda não há {nomeEntidade.ToLower()}s! Faça um cadastro!");
+                if (digitarEnterEContinuar)
+                    DigitarEnterEContinuar.Executar();
+                return false;
+            }
+
+            T[] registros = repositorio.SelecionarRegistros();
+            int encontrados = 0;
+
+            foreach (T reg in registros)
+            {
+                if (reg == null) continue;
+
+                if (encontrados == 0)
+                {
+                    Console.WriteLine();
+                    ImprimirCabecalhoTabela();
+                }
+
+                ImprimirRegistro(reg);
+
+                encontrados++;
+            }
+
+            if (digitarEnterEContinuar)
+                DigitarEnterEContinuar.Executar();
+
+            return encontrados > 0;
+        }
+
+        public bool Editar()
+        {
+            //pagina = "Editar Fabricante";
+            ExibirCabecalho();
+
+            if (!repositorio.VerificarExistenciaRegistros())
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Nenhum {nomeEntidade} cadastrado.");
+                Console.ResetColor();
+                DigitarEnterEContinuar.Executar();
+                return false;
+            }
+
+            Visualizar(true, false, false);
+
+            while (true)
+            {
+                Console.Write($"\nDigite o Id do {nomeEntidade} para editar: ");
+                if (!int.TryParse(Console.ReadLine(), out int idRegistro))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("ID inválido. Tente novamente.");
+                    Console.ResetColor();
+                    DigitarEnterEContinuar.Executar();
+                    continue;
+                }
+
+                if (!repositorio.TentarObterRegistro(idRegistro, out var registroExistente))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"{nomeEntidade} não encontrado. Tente novamente!");
+                    Console.ResetColor();
+                    continue;
+                }
+
+                var novosDados = ObterNovosDados(registroExistente, true);
+                //novosDados.id = registroExistente.id;
+
+                repositorio.EditarRegistro(idRegistro, novosDados);
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"\n{nomeEntidade} editado com sucesso! id: {novosDados.id}");
+                Console.ResetColor();
+                DigitarEnterEContinuar.Executar();
+                return true;
+            }
+        }
+
         public abstract T CriarInstanciaVazia();
 
         protected abstract T ObterNovosDados(T dadosIniciais, bool editar);
+
+        protected abstract void ImprimirCabecalhoTabela();
+
+        protected abstract void ImprimirRegistro(T entidade);
     }
 }
