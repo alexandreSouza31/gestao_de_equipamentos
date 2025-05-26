@@ -146,7 +146,7 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
                 }
 
                 var novosDados = ObterNovosDados(registroExistente, true);
-                //novosDados.id = registroExistente.id;
+                novosDados.id = registroExistente.id;
 
                 repositorio.EditarRegistro(idRegistro, novosDados);
 
