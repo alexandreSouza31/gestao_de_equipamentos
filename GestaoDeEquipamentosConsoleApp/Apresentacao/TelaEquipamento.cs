@@ -60,7 +60,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
         {
             while (true)
             {
-                //pagina = "Cadastrar";
                 ExibirCabecalho();
 
                 if (editar)

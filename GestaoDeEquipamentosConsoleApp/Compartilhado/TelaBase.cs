@@ -1,7 +1,4 @@
-﻿using GestaoDeEquipamentosConsoleApp.Dados;
-using GestaoDeEquipamentosConsoleApp.Negocio;
-using GestaoDeEquipamentosConsoleApp.Utils;
-using System.Security.Cryptography.X509Certificates;
+﻿using GestaoDeEquipamentosConsoleApp.Utils;
 
 namespace GestaoDeEquipamentosConsoleApp.Compartilhado
 {
@@ -15,6 +12,8 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
             this.nomeEntidade = nomeEntidade;
             this.repositorio = repositorio;
         }
+
+        Direcionar direcionar = new Direcionar();
 
         protected void ExibirCabecalho(string contexto="")
         {
@@ -47,22 +46,19 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
 
             var novosDados = ObterNovosDados(dadosIniciais, false);
 
-            if (novosDados == null)
+            if (novosDados == null) return false;
+
+            else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Cadastro cancelado.");
+                repositorio.CadastrarRegistro(novosDados);
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"\n{nomeEntidade} cadastrado com sucesso! ID: {novosDados.id}");
                 Console.ResetColor();
-                return false;
+
+                direcionar.DirecionarParaMenu(true, false, nomeEntidade);
+                return true;
             }
-
-            repositorio.CadastrarRegistro(novosDados);
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"\n {nomeEntidade} cadastrado com sucesso! ID: {novosDados.id}");
-            Console.ResetColor();
-            Console.Write("Digite [Enter] para continuar...");
-            Console.ReadLine();
-            return true;
         }
 
         public bool Visualizar(bool exibirCabecalho, bool digitarEnterEContinuar, bool msgAoCadastrar = true)
@@ -76,12 +72,14 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
 
             bool haRegistros = repositorio.VerificarExistenciaRegistros();
 
-            if (!haRegistros && msgAoCadastrar)
+            if (!haRegistros)
             {
-                Console.WriteLine($"Ainda não há {nomeEntidade.ToLower()}s! Faça um cadastro!");
-                if (digitarEnterEContinuar)
-                    DigitarEnterEContinuar.Executar();
-                return false;
+                if (msgAoCadastrar)
+                {
+                    Console.WriteLine($"Ainda não há {nomeEntidade.ToLower()}s!");
+                    direcionar.DirecionarParaMenu(false, false, nomeEntidade);
+                    return false;
+                }
             }
 
             T[] registros = repositorio.SelecionarRegistros();
@@ -112,12 +110,10 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
         {
             ExibirCabecalho("editar");
 
-            if (!repositorio.VerificarExistenciaRegistros())
+            var haCadastro = repositorio.VerificarExistenciaRegistros();
+            if (!haCadastro)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Nenhum {nomeEntidade} cadastrado.");
-                Console.ResetColor();
-                DigitarEnterEContinuar.Executar();
+                direcionar.DirecionarParaMenu(false, false, nomeEntidade);
                 return false;
             }
 
@@ -131,7 +127,6 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("ID inválido. Tente novamente.");
                     Console.ResetColor();
-                    DigitarEnterEContinuar.Executar();
                     continue;
                 }
 
@@ -151,56 +146,59 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"\n{nomeEntidade} editado com sucesso! id: {novosDados.id}");
                 Console.ResetColor();
-                DigitarEnterEContinuar.Executar();
+
+                direcionar.DirecionarParaMenu(true, false, nomeEntidade);
                 return true;
             }
         }
+
 
         public bool Excluir()
         {
             ExibirCabecalho("excluir");
 
-            if (!repositorio.VerificarExistenciaRegistros())
+            var haCadastro = repositorio.VerificarExistenciaRegistros();
+
+            if (!haCadastro)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Nenhum {nomeEntidade} cadastrado.");
-                Console.ResetColor();
-                DigitarEnterEContinuar.Executar();
+                direcionar.DirecionarParaMenu(false, false, nomeEntidade);
                 return false;
             }
-
-            Visualizar(true, false, false);
-            while (true)
+            else 
             {
-                Console.Write($"\nDigite o Id do {nomeEntidade} para excluir: ");
-                if (!int.TryParse(Console.ReadLine(), out int idRegistro))
+                Visualizar(true, false, false);
+                while (true)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ID inválido. Tente novamente.");
+                    Console.Write($"\nDigite o Id do {nomeEntidade} para excluir: ");
+                    if (!int.TryParse(Console.ReadLine(), out int idRegistro))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("ID inválido. Tente novamente.");
+                        Console.ResetColor();
+                        continue;
+                    }
+
+                    if (!repositorio.TentarObterRegistro(idRegistro, out var registro))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"{nomeEntidade} não encontrado. Tente novamente.");
+                        Console.ResetColor();
+                        continue;
+                    }
+
+                    DesejaExcluir desejaExcluir = new DesejaExcluir();
+                    var vaiExcluir = desejaExcluir.DesejaMesmoExcluir($"esse {nomeEntidade}");
+
+                    if (vaiExcluir != "S") return false;
+
+                    repositorio.ExcluirRegistro(idRegistro);
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\n{nomeEntidade} excluído com sucesso! id: {registro.id}");
                     Console.ResetColor();
-                    continue;
+                    direcionar.DirecionarParaMenu(false, false, nomeEntidade);
+                    return true;
                 }
-
-                if (!repositorio.TentarObterRegistro(idRegistro, out var registro))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"{nomeEntidade} não encontrado. Tente novamente.");
-                    Console.ResetColor();
-                    continue;
-                }
-
-                DesejaExcluir desejaExcluir = new DesejaExcluir();
-                var vaiExcluir = desejaExcluir.DesejaMesmoExcluir($"esse {nomeEntidade}");
-
-                if (vaiExcluir != "S") return false;
-
-                repositorio.ExcluirRegistro(idRegistro);
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"\n{nomeEntidade} excluído com sucesso! id: {registro.id}");
-                Console.ResetColor();
-                DigitarEnterEContinuar.Executar();
-                return true;
             }
         }
 

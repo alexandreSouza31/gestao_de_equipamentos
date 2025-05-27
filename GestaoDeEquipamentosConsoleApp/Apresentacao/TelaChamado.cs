@@ -7,8 +7,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 {
     public class TelaChamado : TelaBase<Chamado>
     {
-
-        //public string pagina;
         public RepositorioChamado repositorioChamado;
         public RepositorioEquipamento repositorioEquipamento;
         Direcionar direcionar = new Direcionar();
@@ -64,10 +62,8 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
 
         protected override Chamado ObterNovosDados(Chamado dadosOriginais, bool editar)
         {
-            //pagina = "Cadastrar chamado";
             if (editar)
             {
-                //pagina = "Editar chamado";
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("************* Caso não queira alterar um campo, basta pressionar Enter para ignorá-lo");

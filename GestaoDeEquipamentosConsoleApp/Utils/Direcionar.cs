@@ -6,23 +6,37 @@ namespace GestaoDeEquipamentosConsoleApp.Utils
     {
         public ResultadoDirecionamento DirecionarParaMenu(bool haItens, bool menuPrincipal, string contexto)
         {
-            if (haItens)
-                return ResultadoDirecionamento.Continuar;
-
-            Console.WriteLine($"\nNenhum {contexto} cadastrado ainda!");
-
-            if (menuPrincipal)
+            if (!haItens)
             {
-                Console.WriteLine("Voltando ao menu principal...");
-                Thread.Sleep(3000);
-                return ResultadoDirecionamento.VoltarMenuPrincipal;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"\nNenhum {contexto} cadastrado ainda!");
+                Console.ResetColor();
             }
-            else
+
+            string mensagem = menuPrincipal
+                ? "Voltando ao menu principal"
+                : $"Voltando ao menu de {contexto}s";
+
+            ExibirTimerRegressivo(5, mensagem);
+
+            return menuPrincipal
+                ? ResultadoDirecionamento.VoltarMenuPrincipal
+                : ResultadoDirecionamento.VoltarMenuContexto;
+        }
+
+
+        private void ExibirTimerRegressivo(int segundos, string mensagem)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
+            for (int i = segundos; i >= 1; i--)
             {
-                Console.WriteLine($"Voltando ao menu de {contexto}s...");
-                Thread.Sleep(3000);
-                return ResultadoDirecionamento.VoltarMenuContexto;
+                Console.Write($"\r{mensagem}... {i}   ");
+                Thread.Sleep(1000);
             }
+
+            Console.ResetColor();
+            Console.WriteLine();
         }
     }
 }

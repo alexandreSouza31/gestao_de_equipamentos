@@ -9,8 +9,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
     public class TelaFabricante : TelaBase<Fabricante>
     {
         private RepositorioFabricante repositorioFabricante;
-        public Direcionar direcionar = new Direcionar();
-        //public string pagina;
 
         public TelaFabricante(RepositorioFabricante? repositorioFabricante = null)
             : base("Fabricante", repositorioFabricante ?? new RepositorioFabricante())
@@ -59,7 +57,6 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             while (true)
             {
                 tela.Visualizar(false, false, false);
-                //pagina = "Cadastrar Fabricante";
                 ExibirCabecalho();
 
                 if (editar)
