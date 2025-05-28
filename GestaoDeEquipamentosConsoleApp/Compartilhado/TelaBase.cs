@@ -4,7 +4,7 @@ namespace GestaoDeEquipamentosConsoleApp.Compartilhado
 {
     public abstract class TelaBase<T> where T : IEntidade
     {
-        protected string nomeEntidade;
+        internal string nomeEntidade;
         protected RepositorioBase<T> repositorio;
 
         protected TelaBase(string nomeEntidade, RepositorioBase<T> repositorio)

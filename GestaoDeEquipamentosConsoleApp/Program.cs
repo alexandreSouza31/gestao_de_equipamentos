@@ -1,6 +1,5 @@
 ﻿using GestaoDeEquipamentosConsoleApp.Apresentacao;
 using GestaoDeEquipamentosConsoleApp.Dados;
-using GestaoDeEquipamentosConsoleApp.Utils;
 
 namespace GestaoDeEquipamentosConsoleApp
 {
@@ -14,7 +13,7 @@ namespace GestaoDeEquipamentosConsoleApp
 
             TelaFabricante telaFabricante = new TelaFabricante(repositorioFabricante);
             TelaEquipamento telaEquipamento = new TelaEquipamento(repositorioEquipamento, repositorioFabricante, telaFabricante);
-            TelaChamado telaChamado = new TelaChamado(repositorioChamado, repositorioEquipamento,telaEquipamento);
+            TelaChamado telaChamado = new TelaChamado(repositorioChamado, repositorioEquipamento, telaEquipamento);
             TelaMenuPrincipal telaPrincipal = new TelaMenuPrincipal();
 
             while (true)
@@ -23,29 +22,25 @@ namespace GestaoDeEquipamentosConsoleApp
 
                 if (telaEscolhida == 'S') break;
 
-                if (telaEscolhida == '1')
+                switch (telaEscolhida)
                 {
-                    while (true)
-                    {
-                        bool menuEquipamento= telaEquipamento.ExecutarMenuEquipamento(telaEquipamento);
-                        if (menuEquipamento == false) break;
-                        
-                    }
-                }
-                else if (telaEscolhida == '2')
-                {
-                    while (true)
-                    {
-                        bool menuChamado = telaChamado.ExecutarMenuChamado(telaChamado);
-                        if (menuChamado == false) break;
-                    }
-                }else if (telaEscolhida == '3')
-                {
-                    while (true)
-                    {
-                        bool menuFabricante = telaFabricante.ExecutarMenuFabricante(telaFabricante);
-                        if (menuFabricante == false) break;
-                    }
+                    case '1':
+                        telaEquipamento.ExecutarMenu();
+                        break;
+
+                    case '2':
+                        telaChamado.ExecutarMenu();
+                        break;
+
+                    case '3':
+                        telaFabricante.ExecutarMenu();
+                        break;
+
+                    default:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Opção inválida!");
+                        Console.ResetColor();
+                        break;
                 }
             }
         }

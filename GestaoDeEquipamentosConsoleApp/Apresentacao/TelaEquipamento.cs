@@ -20,40 +20,22 @@ namespace GestaoDeEquipamentosConsoleApp.Apresentacao
             this.repositorioFabricante = repositorioFabricante;
             this.telaFabricante = telaFabricante;
         }
+
+        public void ExecutarMenu()
+        {
+            var menuFabricante = new TelaMenuEntidadeBase<Equipamento>(this);
+
+            bool continuar = true;
+            while (continuar)
+            {
+                continuar = menuFabricante.ExecutarMenuEntidade();
+            }
+        }
+
+
         public override Equipamento CriarInstanciaVazia()
         {
             return new Equipamento();
-        }
-
-        public bool ExecutarMenuEquipamento(TelaEquipamento telaEquipamento)
-        {
-            char opcaoEscolhida = telaEquipamento.ApresentarMenu();
-
-            if (opcaoEscolhida == 'S') return false;
-
-            switch (opcaoEscolhida)
-            {
-                case '1':
-                    bool continuar = telaEquipamento.Cadastrar();
-                    if (!continuar) return false;
-                    break;
-                case '2':
-                    telaEquipamento.Visualizar(true, true);
-                    break;
-                case '3':
-                    telaEquipamento.Editar();
-                    break;
-                case '4':
-                    telaEquipamento.Excluir();
-                    break;
-                default:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Digite uma opção válida!");
-                    Console.ResetColor();
-                    DigitarEnterEContinuar.Executar(true);
-                    break;
-            }
-            return true;
         }
 
         protected override Equipamento ObterNovosDados(Equipamento dadosOriginais, bool editar)
